@@ -3,7 +3,7 @@ package edu.brown.cs.student.database;
 public class User extends DBRelation { 
   
   @Override
-  protected String setRelationName() {
+  protected String relationName() {
     return "users";
   }
   

@@ -1,4 +1,4 @@
-package edu.brown.cs.student.main;
+package edu.brown.cs.student.database;
 
 import java.sql.ResultSet;
 
@@ -8,8 +8,6 @@ import java.sql.ResultSet;
  * @author lbrito2
  */
 public abstract class DBRelation{
-	// TODO interface vs abstract class? think of any abstract class methods 
-	// we might want to have
 
 	/**
 	 * Name of the relation/table as it appears in the database.
@@ -18,7 +16,7 @@ public abstract class DBRelation{
 
 	// NOTE: the below hack forces subclasses to set a relationName.
 	public DBRelation() {
-		name = this.setRelationName();
+		name = this.relationName();
 	}
 
 
@@ -31,10 +29,10 @@ public abstract class DBRelation{
 
 	/**
 	 * TODO
-	 * gntgs
+	 * 
 	 * @return
 	 */
-	protected abstract String setRelationName();
+	protected abstract String relationName();
 
 	/**
 	 * TODO 
