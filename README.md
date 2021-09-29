@@ -1,4 +1,5 @@
 # Design 
+## Database Object
 The centerpiece of the database API is the `Database` class. Under the hood, 
 this class uses Java's builtin SQL API to make queries to the database specified 
 in the constructor. Each relation in the given database must be represented 
@@ -7,6 +8,7 @@ enforce an object-oriented approach where each tuple (row) of a relation (table)
 is represented by an instance of the class representing that tuple. New relation
 representations may be added with the `addRelation` method.
 
+## DBRelation Object
 Implementations of the `DBRelation` class must implement a `relationName` method 
 which returns the name of the relation within the database this `DBRelation` 
 represents. This is to enforce a non-null identifier which will be used to map 
@@ -16,6 +18,11 @@ of that relation and, more importantly, _setters for those fields annotated with
 `@RelationAttribute(name=<attribute_name>)` where `attribute_name` is the 
 name of the attribute that setter will obtain from queries as it appears in the 
 database.
+
+The Database API is designed so that the `DBRelation` representation of a 
+database's relation need not include every attribute that actually appears in 
+that relation---queries are generated such that the `SELECT` statement only 
+includes attributes denoted by annotated setter methods (see above). 
 
 
 # README
