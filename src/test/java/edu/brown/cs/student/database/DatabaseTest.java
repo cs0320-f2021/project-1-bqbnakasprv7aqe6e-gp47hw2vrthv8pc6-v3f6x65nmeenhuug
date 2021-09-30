@@ -24,4 +24,23 @@ public class DatabaseTest {
     }
 	}
 
+	@Test 
+	public void twoRelationTypesTest () {
+		try {
+			Database db = new Database("./data/project-1/testDB1.sqlite3");
+			db.addRelation(Review.class);
+      db.addRelation(User.class);
+			List<Review> queryResult = db.where("review_text == \"Hello world!\"", "reviews");
+      for (Review r : queryResult) {
+        assertEquals(r.getId(), 1);
+      }
+			List<User> queryResult2 = db.where("user_id == \"1\"", "users");
+      for (User r : queryResult2) {
+        assertEquals(r.getUserID(), "1");
+      }
+		} catch (Exception e) {
+      e.printStackTrace();
+    }
+	}
+
 }
