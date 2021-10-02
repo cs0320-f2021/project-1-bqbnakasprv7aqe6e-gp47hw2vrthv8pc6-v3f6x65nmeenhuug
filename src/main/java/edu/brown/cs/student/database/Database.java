@@ -136,13 +136,11 @@ public class Database {
         }
         queryResult.add(resultItem);
       }
+      rs.close();
       return queryResult;
     } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
         | NoSuchMethodException | SecurityException e) {
       throw new BadRelationException("Bad relation: " + relationClass.getName());
     } 
-
-
   }
-
 }
