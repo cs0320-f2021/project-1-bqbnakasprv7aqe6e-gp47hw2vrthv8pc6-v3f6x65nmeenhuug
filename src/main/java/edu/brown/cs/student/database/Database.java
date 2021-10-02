@@ -78,10 +78,10 @@ public class Database {
       Method[] relationMethods = relationClass.getDeclaredMethods();
       Stream<Method> methodStream = Arrays.stream(relationMethods);
       Method[] relationAttributeSetters = methodStream.filter((m) ->
-        m.isAnnotationPresent(RelationAttribute.class)).toArray(Method[]::new);
+        m.isAnnotationPresent(RelationAttributeSetter.class)).toArray(Method[]::new);
 
       for (Method setter : relationAttributeSetters) {
-        String attributeName = setter.getAnnotation(RelationAttribute.class).name();
+        String attributeName = setter.getAnnotation(RelationAttributeSetter.class).name();
         setterHashMap.put(attributeName, setter);
       }
 

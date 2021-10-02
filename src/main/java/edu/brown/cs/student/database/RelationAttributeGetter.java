@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface RelationAttribute {
-  String name();
+public @interface RelationAttributeGetter {
+	String name();
 }
