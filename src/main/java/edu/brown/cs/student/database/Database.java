@@ -272,10 +272,12 @@ public class Database {
 // prep = conn.prepareStatement(INSERT INTO + (column attribute names, comma separated) + VALUES + (actual values for
     // attributes, comma separated))
     PreparedStatement prep;
-
+    String attribute = attributeJoiner.toString();
+    String value = valueJoiner.toString();
     try {
       Statement state = conn.createStatement();
-      String sql = "INSERT INTO " + attributeJoiner + " VALUES " + valueJoiner + ";";
+      String sql = "INSERT INTO" + item.getRelationName() + "(" + attribute + ")" +
+              " VALUES " + "(" + value + ");";
       state.executeUpdate(sql);
     } catch (SQLException throwables) {
       throwables.printStackTrace();
