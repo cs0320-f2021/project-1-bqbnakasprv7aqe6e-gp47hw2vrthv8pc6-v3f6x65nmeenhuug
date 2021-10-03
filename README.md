@@ -103,7 +103,8 @@ duplicate commands does not throw any errors.
 
 ## KDTree
 Unit testing of `KDTree` ensures proper construction of tree, a functional 
-nearest neighbors algorithm, proper construction given empty data. 
+nearest neighbors algorithm, proper construction given empty data, equidistant 
+points in nearest neighbors algorithm. 
 
 ## BinaryNode 
 Unit testing of `BinaryNode` ensures the implementation properly handles 

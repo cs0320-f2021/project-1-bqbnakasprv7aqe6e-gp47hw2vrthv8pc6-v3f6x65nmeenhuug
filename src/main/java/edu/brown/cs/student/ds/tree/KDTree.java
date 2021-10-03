@@ -32,10 +32,12 @@ public class KDTree<K> {
    */
   public KDTree(Collection<KVPair<K, double[]>> items) {
     Optional<KVPair<K, double[]>> probeItem = items.stream().findAny();
-
-    dimension = probeItem.get().getValue().length;
-    this.rootNode = constructKDTree(items, 0);
-    
+    if (probeItem.isEmpty()) {
+      this.rootNode = Optional.empty();
+    } else {
+      dimension = probeItem.get().getValue().length;
+      this.rootNode = constructKDTree(items, 0);
+    }
   }
   
   /**
