@@ -1,5 +1,6 @@
 package edu.brown.cs.student.database;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -246,11 +247,12 @@ public class Database {
     }
 
     String[] attributeArray = getterHashMap.keySet().toArray(String[]::new);
-    String[] valueArray = getterHashMap.entrySet().toArray(String[]::new); 
+    Method[] valueArray = getterHashMap.values().toArray(Method[]::new);
     /* Above line throws exception because we're trying to store Methods in a 
      * String[] (see line 237, declaration of getterHashMap); if I'm following
      * your code correctly what we should be doing here is invoking the getter,
      * obtaining the result, and parsing it to a String. */
+    // update: changed entrySet to values and works, but still suspect
     StringJoiner attributeJoiner = new StringJoiner(",");
     StringJoiner valueJoiner = new StringJoiner(",");
 
@@ -258,8 +260,14 @@ public class Database {
       attributeJoiner.add(attributeName);
     }
 
-    for (String value : valueArray) {
-      valueJoiner.add(value);
+    for (Method valueGetter : valueArray) {
+      try {
+        valueJoiner.add(valueGetter.invoke(item).toString());
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        e.printStackTrace();
+      }
     }
 // prep = conn.prepareStatement(INSERT INTO + (column attribute names, comma separated) + VALUES + (actual values for
     // attributes, comma separated))
@@ -285,7 +293,7 @@ public class Database {
       );
       prep.executeUpdate();
     }
-    catch (Exception e){
+    catch (Exception e) {
       e.printStackTrace();
     }
   }
