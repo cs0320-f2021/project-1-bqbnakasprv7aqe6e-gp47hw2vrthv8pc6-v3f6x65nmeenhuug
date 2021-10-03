@@ -146,23 +146,28 @@ public class Database {
       Stream<Method> methodStream = Arrays.stream(relationMethods);
       Method[] relationAttributeSetters = methodStream.filter((m) ->
               m.isAnnotationPresent(RelationAttribute.class)).toArray(Method[]::new);
+
       for (Method getter : relationAttributeSetters) {
         String attributeName = getter.getAnnotation(RelationAttribute.class).name();
         getterHashMap.put(attributeName, getter);
       }
+
       String[] attributeArray = getterHashMap.keySet().toArray(String[]::new);
       String[] valueArray = getterHashMap.entrySet().toArray(String[]::new);
       StringJoiner attributeJoiner = new StringJoiner(",");
       StringJoiner valueJoiner = new StringJoiner(",");
+
       for (String attributeName : attributeArray) {
         attributeJoiner.add(attributeName);
       }
+
       for (String value : valueArray) {
         valueJoiner.add(value);
       }
 // prep = conn.prepareStatement(INSERT INTO + (column attribute names, comma separated) + VALUES + (actual values for
       // attributes, comma separated))
       PreparedStatement prep;
+
       try {
         prep = conn.prepareStatement(
                 "INSERT INTO " + attributeJoiner + " VALUES " + valueJoiner + ";");
@@ -176,6 +181,7 @@ public class Database {
     public <T extends DBRelation> void delete(T item) {
     String condition = item.getPrimaryKeyAttribute() +" = " + item.getPrimaryKeyValue();
     PreparedStatement prep;
+
     try {
       prep = conn.prepareStatement(
               "DELETE FROM " + item.getRelationName() + "WHERE " + condition
