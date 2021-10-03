@@ -19,6 +19,19 @@ public abstract class DBRelation{
 		name = this.relationName();
 	}
 
+	/**
+	 * TODO
+	 *
+	 * @return
+	 */
+	public abstract String getPrimaryKeyAttribute();
+
+	/**
+	 * TODO
+	 *
+	 * @return
+	 */
+	public abstract String getPrimaryKeyValue();
 
 	/**
 	 * TODO
