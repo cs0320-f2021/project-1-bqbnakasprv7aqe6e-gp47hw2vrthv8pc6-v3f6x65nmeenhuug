@@ -246,7 +246,7 @@ public class Database {
     }
 
     String[] attributeArray = getterHashMap.keySet().toArray(String[]::new);
-    String[] valueArray = getterHashMap.entrySet().toArray(String[]::new); 
+    Method[] valueArray = getterHashMap.entrySet().toArray(Method[]::new);
     /* Above line throws exception because we're trying to store Methods in a 
      * String[] (see line 237, declaration of getterHashMap); if I'm following
      * your code correctly what we should be doing here is invoking the getter,
@@ -258,8 +258,7 @@ public class Database {
       attributeJoiner.add(attributeName);
     }
 
-    for (String value : valueArray) {
-      Method valueGetter = getterHashMap.get(value);
+    for (Method valueGetter : valueArray) {
       try {
         valueJoiner.add(valueGetter.invoke(item).toString());
       } catch (IllegalAccessException e) {
