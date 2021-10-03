@@ -1,5 +1,5 @@
 # Project 1: Sprint (part 1)
-By Lucas Brito, Anna Swanson, Damon Burdell. 
+By Lucas Brito `lbrito2`, Anna Swanson `aswanso2`, Damon Burdell `dburdell`. 
 
 # Design 
 `Main.java` contains the REPL implementation, including the read and print 
