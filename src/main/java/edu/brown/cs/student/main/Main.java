@@ -15,6 +15,7 @@ import org.eclipse.jetty.io.ssl.SslClientConnectionFactory;
 
 import freemarker.template.Configuration;
 // import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
+// import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import spark.ExceptionHandler;
@@ -30,6 +31,9 @@ import java.util.List;
 import edu.brown.cs.student.database.Database;
 import edu.brown.cs.student.database.DBRelation;
 import edu.brown.cs.student.database.User;
+import edu.brown.cs.student.ds.KVPair;
+import edu.brown.cs.student.ds.tree.KDTree;
+
 /**
  * The Main class of our project. This is where execution begins.
  */
@@ -72,7 +76,7 @@ public final class Main {
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
       String input;
       List<String[]> starData = new ArrayList<String[]>();
-      List<double[]> userData = new ArrayList<double[]>();
+      List<KVPair<User, double[]>> userData = new ArrayList<KVPair<User, double[]>>();
       CSVParser csvparser = new CSVParser();
       Database database = new Database(); 
       
@@ -185,11 +189,52 @@ public final class Main {
         database.addRelation(User.class);
         try {
           database.connect(path);
-          
+          List<User> queryResult = database.rawQuery("SELECT * FROM users", User.class);
+          for (User user : queryResult) {
+            double[] point = {Double.parseDouble(user.getWeight().replaceAll("\\D", "")),
+                              Double.parseDouble(user.getHeight().replaceAll("\\D", "")),
+                              Double.parseDouble(user.getAge().replaceAll("\\D", ""))};
+                            
+            KVPair<User, double[]> row = new KVPair<User, double[]>(user, point);
+            userData.add(row);
+          }
         } catch (Exception e) {
+          e.printStackTrace();
           Error.badInputError(); // TODO is this actually the error you want to throw?
         }
+      });
 
+      commandHandler.addCommand("similar", (args) -> {
+        int k = Integer.parseInt(args[0]); 
+        List<String> neighbors = new ArrayList<String>(); 
+        List<KVPair<User, double[]>> dataToSearch = null; 
+        double[] targetPoint = new double[3]; 
+        if (args.length == 2) {
+          String userID = args[1];
+          List<KVPair<User, double[]>> filteredData = new ArrayList<KVPair<User, double[]>>();
+          KVPair<User, double[]> userRow = null;
+          for (KVPair<User, double[]> row : userData) {
+            if (row.getKey().getUserID().equals(userID)) {
+              userRow = row;
+            } else {
+              filteredData.add(row);
+            }
+          }
+          targetPoint = userRow.getValue();
+        } else if (args.length == 4) {
+          dataToSearch = userData;
+
+          double[] parsedCoords = {Double.parseDouble(args[1]),
+                                   Double.parseDouble(args[2]),
+                                   Double.parseDouble(args[3])};
+          targetPoint = parsedCoords;
+        }
+        KDTree<User> tree = new KDTree<User>(dataToSearch);
+        List<KVPair<User, double[]>> result = tree.kNearestNeighbors(targetPoint, k);
+        neighbors.clear();
+        for (KVPair<User, double[]> neighbor : result) {
+          System.out.println(neighbor.getKey().getUserID());
+        }
       });
 
 
@@ -199,6 +244,7 @@ public final class Main {
           input = input.trim();
           commandHandler.parseCommand(input);
         } catch (Exception e) {
+          e.printStackTrace();
           Error.badInputError();
         }
       }
