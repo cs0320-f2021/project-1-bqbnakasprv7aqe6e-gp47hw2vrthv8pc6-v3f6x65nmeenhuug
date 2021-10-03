@@ -231,7 +231,7 @@ public class Database {
       throw new BadRelationException("Bad relation: " + relationClass.getName());
     } 
   }
-  
+
   public <T extends DBRelation> void insert(T item) {
     Class<? extends DBRelation> relationClass = item.getClass();
     HashMap<String, Method> getterHashMap = new HashMap<String, Method>();
@@ -246,7 +246,11 @@ public class Database {
     }
 
     String[] attributeArray = getterHashMap.keySet().toArray(String[]::new);
-    String[] valueArray = getterHashMap.entrySet().toArray(String[]::new);
+    String[] valueArray = getterHashMap.entrySet().toArray(String[]::new); 
+    // Above line throws exception because we're trying to store Methods in a 
+    // String[]; if I'm following your code correctly what we should be doing 
+    // here is invoking the getter, obtaining the result, and parsing it to a 
+    // String. 
     StringJoiner attributeJoiner = new StringJoiner(",");
     StringJoiner valueJoiner = new StringJoiner(",");
 
