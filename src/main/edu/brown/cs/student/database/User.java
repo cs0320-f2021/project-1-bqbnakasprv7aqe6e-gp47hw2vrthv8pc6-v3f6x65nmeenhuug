@@ -1,6 +1,6 @@
 package edu.brown.cs.student.database;
 
-public class User extends DBRelation { 
+public class User extends DBRelation {
   private String id;
   private String weight; 
   private String bustSize; 
@@ -10,13 +10,22 @@ public class User extends DBRelation {
   private String horoscope;
 
   @Override
+  public String getPrimaryKeyAttribute() {
+    return "user_id";
+  }
+  @Override
+  public String getPrimaryKeyValue() {
+    return this.id;
+  }
+
+  @Override
   protected String relationName() {
     return "users";
   }
   
   @Override
   public String getRelationName() {
-    return User.name;
+    return name;
   }
 
   @RelationAttribute(

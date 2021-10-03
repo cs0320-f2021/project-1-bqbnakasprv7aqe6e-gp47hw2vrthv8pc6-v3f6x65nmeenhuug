@@ -1,13 +1,11 @@
 package edu.brown.cs.student.database;
 
-import java.sql.ResultSet;
-
-/** 
+/**
  * Abstract class representing abstracted tuple of relational model.
  * 
  * @author lbrito2
  */
-public abstract class DBRelation{
+public abstract class DBRelation {
 
 	/**
 	 * Name of the relation/table as it appears in the database.
@@ -19,7 +17,9 @@ public abstract class DBRelation{
 		name = this.relationName();
 	}
 
+	public abstract String getPrimaryKeyAttribute();
 
+	public abstract String getPrimaryKeyValue();
 	/**
 	 * TODO
 	 * 

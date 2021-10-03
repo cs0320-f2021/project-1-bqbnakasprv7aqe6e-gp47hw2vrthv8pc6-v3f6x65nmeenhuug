@@ -1,7 +1,6 @@
 package edu.brown.cs.student.database;
 
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,10 +10,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.*;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.sql.*;
-import java.util.Date;
 import java.util.StringJoiner;
 
 
@@ -78,7 +75,7 @@ public class Database {
       Method[] relationMethods = relationClass.getDeclaredMethods();
       Stream<Method> methodStream = Arrays.stream(relationMethods);
       Method[] relationAttributeSetters = methodStream.filter((m) ->
-        m.isAnnotationPresent(RelationAttribute.class)).toArray(Method[]::new);
+              m.isAnnotationPresent(RelationAttribute.class)).toArray(Method[]::new);
 
       for (Method setter : relationAttributeSetters) {
         String attributeName = setter.getAnnotation(RelationAttribute.class).name();
@@ -93,12 +90,12 @@ public class Database {
       }
 
       String queryAttributes = joiner.toString();
-        
+
       String query = "SELECT " + queryAttributes + " FROM " + relationName + " WHERE " + condition;
       PreparedStatement prep = conn.prepareStatement(query);
       ResultSet rs = prep.executeQuery();
-      
-      
+
+
       while (rs.next()) {
         T resultItem = relationClass.getDeclaredConstructor().newInstance();
         int i = 1;
@@ -138,11 +135,56 @@ public class Database {
       }
       return queryResult;
     } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-        | NoSuchMethodException | SecurityException e) {
+            | NoSuchMethodException | SecurityException e) {
       throw new BadRelationException("Bad relation: " + relationClass.getName());
-    } 
+    }
+  }
+    public <T extends DBRelation> void insert(T item) {
+      Class<? extends DBRelation> relationClass = item.getClass();
+      HashMap<String, Method> getterHashMap = new HashMap<String, Method>();
+      Method[] relationMethods = relationClass.getDeclaredMethods();
+      Stream<Method> methodStream = Arrays.stream(relationMethods);
+      Method[] relationAttributeSetters = methodStream.filter((m) ->
+              m.isAnnotationPresent(RelationAttribute.class)).toArray(Method[]::new);
+      for (Method getter : relationAttributeSetters) {
+        String attributeName = getter.getAnnotation(RelationAttribute.class).name();
+        getterHashMap.put(attributeName, getter);
+      }
+      String[] attributeArray = getterHashMap.keySet().toArray(String[]::new);
+      String[] valueArray = getterHashMap.entrySet().toArray(String[]::new);
+      StringJoiner attributeJoiner = new StringJoiner(",");
+      StringJoiner valueJoiner = new StringJoiner(",");
+      for (String attributeName : attributeArray) {
+        attributeJoiner.add(attributeName);
+      }
+      for (String value : valueArray) {
+        valueJoiner.add(value);
+      }
+// prep = conn.prepareStatement(INSERT INTO + (column attribute names, comma separated) + VALUES + (actual values for
+      // attributes, comma separated))
+      PreparedStatement prep;
+      try {
+        prep = conn.prepareStatement(
+                "INSERT INTO " + attributeJoiner + " VALUES " + valueJoiner + ";");
+        prep.addBatch();
+        prep.executeBatch();
+          } catch (SQLException throwables) {
+        throwables.printStackTrace();
+      }
+    }
 
+    public <T extends DBRelation> void delete(T item) {
+    String condition = item.getPrimaryKeyAttribute() +" = " + item.getPrimaryKeyValue();
+    PreparedStatement prep;
+    try {
+      prep = conn.prepareStatement(
+              "DELETE FROM " + item.getRelationName() + "WHERE " + condition
+      );
+    }
+    catch (Exception e){
+      e.printStackTrace();
+      }
+    }
 
   }
 
-}

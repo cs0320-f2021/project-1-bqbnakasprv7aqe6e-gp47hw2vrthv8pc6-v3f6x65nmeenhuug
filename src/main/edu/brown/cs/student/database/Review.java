@@ -6,11 +6,19 @@ public class Review extends DBRelation {
   private String reviewSummary;
   private String reviewDate;
   private int id;
-  
 
   @Override
+  public String getPrimaryKeyAttribute() {
+    return "id";
+  }
+
+  @Override
+  public String getPrimaryKeyValue() {
+    return String.valueOf(this.id);
+  }
+  @Override
   public String getRelationName() {
-    return Review.name;
+    return name;
   }
 
   @Override
