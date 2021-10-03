@@ -274,10 +274,9 @@ public class Database {
     PreparedStatement prep;
 
     try {
-      prep = conn.prepareStatement(
-          "INSERT INTO " + attributeJoiner + " VALUES " + valueJoiner + ";");
-      prep.addBatch();
-      prep.executeBatch();
+      Statement state = conn.createStatement();
+      String sql = "INSERT INTO " + attributeJoiner + " VALUES " + valueJoiner + ";";
+      state.executeUpdate(sql);
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     }
@@ -285,13 +284,11 @@ public class Database {
 
   public <T extends DBRelation> void delete(T item) {
     String condition = item.getPrimaryKeyAttribute() +" = " + item.getPrimaryKeyValue();
-    PreparedStatement prep;
+    String sql = "DELETE FROM " + item.getRelationName() + "WHERE " + condition;
 
     try {
-      prep = conn.prepareStatement(
-          "DELETE FROM " + item.getRelationName() + "WHERE " + condition
-      );
-      prep.executeUpdate();
+      Statement state = conn.createStatement();
+      state.executeUpdate(sql);
     }
     catch (Exception e) {
       e.printStackTrace();
