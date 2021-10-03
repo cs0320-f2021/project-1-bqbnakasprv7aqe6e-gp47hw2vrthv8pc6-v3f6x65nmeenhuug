@@ -24,32 +24,44 @@ import java.lang.reflect.*;
 import edu.brown.cs.student.database.exceptions.BadRelationException;
 import edu.brown.cs.student.main.Error;
 
-
+/**
+ * Database ORM API. Uses Java's built in SQL API. 
+ * 
+ * @author lbrito2
+ */
 public class Database {
   private HashMap<String, Class<? extends DBRelation>> relations = new HashMap<String, Class<? extends DBRelation>>();
   private Connection conn = null;
  
   /**
-   * Default constructor. Instantiates a connection to the database via Java's 
-   * builtin SQL API. 
-   * 
-   * @param filename path to .sqlite3 file
-   * @throws SQLException 
-   * @throws ClassNotFoundException
+   * Default constructor.
    */
   public Database() {
 
   }
   
+  /** 
+   * Clear this instance's relations and resets the SQL connection. 
+   */
   public void clear() {
     conn = null; 
     clearRelations();
   }
 
+  /**
+   * Clear this instance's relations. 
+   */
   public void clearRelations() { 
     relations.clear(); 
   }
 
+  /**
+   * Connect to a new SQL database given by a path to a .sqlite3 file. 
+   * 
+   * @param filename
+   * @throws SQLException
+   * @throws ClassNotFoundException
+   */
   public void connect(String filename) throws SQLException, ClassNotFoundException {
     this.clear();
     Class.forName("org.sqlite.JDBC");
@@ -77,6 +89,18 @@ public class Database {
     }
   }
 
+  /**
+   * Make a query to the given relation inside the connected database with the 
+   * given where clause.
+   * 
+   * @param <T> A DBRelation object
+   * @param condition A SQL condition
+   * @param relationName name of the relation we will select from, a string
+   * @return A list of the given DBRelation objects
+   * 
+   * @throws BadRelationException
+   * @throws SQLException
+   */
   public <T extends DBRelation> List<T> where(String condition, String relationName) throws BadRelationException, SQLException {
     @SuppressWarnings("unchecked") // TODO explain why this is okay/talk to TA
     Class<T> relationClass = (Class<T>) relations.get(relationName);
@@ -88,7 +112,6 @@ public class Database {
     }
 
     try {
-      // TODO consider putting this HashMap in the DBRelation abstract class
       HashMap<String, Method> setterHashMap = new HashMap<String, Method>();
       Method[] relationMethods = relationClass.getDeclaredMethods();
       Stream<Method> methodStream = Arrays.stream(relationMethods);
@@ -161,6 +184,16 @@ public class Database {
     } 
   }
 
+  /**
+   * Make the given query to the connected database.
+   * 
+   * @param <T> a DBRelation object
+   * @param query the query that will be made to the database, a string.
+   * @param relationClass the class field of the DBRelation objects to be returned
+   * @return a list of DBRelation objects
+   * @throws SQLException
+   * @throws BadRelationException
+   */
   public <T extends DBRelation> List<T> rawQuery(String query, Class<T> relationClass) throws SQLException, BadRelationException {
     List<T> queryResult = new ArrayList<T>();
 
@@ -233,6 +266,12 @@ public class Database {
     } 
   }
 
+  /**
+   * Insert the given DBRelation object into the connected database. 
+   * 
+   * @param <T> a DBRelation 
+   * @param item the row/tuple to be inserted
+   */
   public <T extends DBRelation> void insert(T item) {
     Class<? extends DBRelation> relationClass = item.getClass();
     HashMap<String, Method> getterHashMap = new HashMap<String, Method>();
@@ -248,10 +287,6 @@ public class Database {
 
     String[] attributeArray = getterHashMap.keySet().toArray(String[]::new);
     Method[] valueArray = getterHashMap.values().toArray(Method[]::new);
-    /* Above line throws exception because we're trying to store Methods in a 
-     * String[] (see line 237, declaration of getterHashMap); if I'm following
-     * your code correctly what we should be doing here is invoking the getter,
-     * obtaining the result, and parsing it to a String. */
     // update: changed entrySet to values and works, but still suspect
     StringJoiner attributeJoiner = new StringJoiner(",");
     StringJoiner valueJoiner = new StringJoiner(",");
@@ -296,6 +331,12 @@ public class Database {
     }
   }
 
+  /**
+   * Delete the given row/tuple from the database. 
+   * 
+   * @param <T> a DBRelation class
+   * @param item the row/tuple to delete
+   */
   public <T extends DBRelation> void delete(T item) {
     String condition = item.getPrimaryKeyAttribute() +" = ?";
     String sql = "DELETE FROM " + item.getRelationName() + " WHERE " + condition;
@@ -309,6 +350,13 @@ public class Database {
     }
   }
 
+  /**
+   * Update the given column of the given row/tuple in the database
+   * @param <T> a DBRelation class
+   * @param item the tuple/row to be updated
+   * @param columnName the column to update 
+   * @param newValue the new value of the column 
+   */
   public <T extends DBRelation> void update(T item, String columnName, String newValue) {
     this.delete(item);
     Class<? extends DBRelation> relationClass = item.getClass();

@@ -24,16 +24,28 @@ public class KDTree<K> {
   private Optional<BinaryNode<K, double[]>> rootNode; 
   private static MathBot mathbot = new MathBot();
 
+  /**
+   * Default constructor.
+   * 
+   * @param items a collection of the key-value pairs that will constitute the 
+   *  tree.
+   */
   public KDTree(Collection<KVPair<K, double[]>> items) {
     Optional<KVPair<K, double[]>> probeItem = items.stream().findAny();
 
     dimension = probeItem.get().getValue().length;
-    // TODO enforce every array in the collection to have the same number of
-    // elements
     this.rootNode = constructKDTree(items, 0);
     
   }
   
+  /**
+   * Private method used to recursively construct the KDTree.
+   * Uses method outlined in https://en.wikipedia.org/wiki/K-d_tree
+   *
+   * @param items the collection of key-value pairs to be inserted
+   * @param depth integer representing number of layers that have been traversed
+   * @return an optional binary node
+   */
   private Optional<BinaryNode<K, double[]>> constructKDTree(Collection<KVPair<K, double[]>> items, int depth) {
     List<KVPair<K, double[]>> itemsList = new ArrayList<KVPair<K, double[]>>(items);
     BinaryNode<K, double[]> tree;
@@ -43,7 +55,6 @@ public class KDTree<K> {
     } else if (itemsList.size() == 0) {
       return Optional.empty(); 
     }
-    // KDTree<T> output = new KDTree<T>(); 
     int sortIndex = depth % dimension;
     Collections.sort(itemsList, (e1, e2) -> {
       return (int) Math.round(e1.getValue()[sortIndex] - e2.getValue()[sortIndex]);
@@ -57,11 +68,30 @@ public class KDTree<K> {
     return Optional.of(tree);
   }   
 
+  /**
+   * Obtain the k nearest neighbors in this KDTree to the given point. 
+   * 
+   * @param point an array of doubles 
+   * @param k integer representing number of neighbors desired
+   * @return a list of key-value pairs, the k nearest neighbors to `point`
+   */
   public List<KVPair<K, double[]>> kNearestNeighbors(double[] point, int k) {
     List<KVPair<K, double[]>> neighbors = new ArrayList<KVPair<K, double[]>>();
     return nearestNeighborRecursion(point, k, 0, this.rootNode, neighbors);
   }
 
+  /**
+   * Recursive method to obtain the k nearest neighbors of the given point.
+   * 
+   * @param point a double array, the target point
+   * @param k integer representing number of neighbors desired
+   * @param depth integer representing number of layers that have been traversed
+   * @param optionalCurrentNode optional current node that the algorithm is 
+   *  visiting.
+   * @param neighbors a mutating list of neighbors 
+   * @return a list of key-value pairs, the k nearest neighbors for that 
+   *  particular recursion.
+   */
   private List<KVPair<K, double[]>> nearestNeighborRecursion(
     double[] point, 
     int k, 

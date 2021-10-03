@@ -5,6 +5,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation for getters for relation attributes. To be used with DBRelation 
+ * subclasses.
+ * 
+ * @author lbrito2
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface RelationAttributeGetter {

@@ -5,6 +5,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+/**
+ * PrimaryKey annotation to be used with DBRelation subclasses.
+ * 
+ * @author lbrito2
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface PrimaryKey {
