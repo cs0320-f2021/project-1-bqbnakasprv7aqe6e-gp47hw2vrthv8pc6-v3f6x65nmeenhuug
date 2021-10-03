@@ -27,6 +27,9 @@ import spark.template.freemarker.FreeMarkerEngine;
 
 import java.util.ArrayList;
 import java.util.List;
+import edu.brown.cs.student.database.Database;
+import edu.brown.cs.student.database.DBRelation;
+import edu.brown.cs.student.database.User;
 /**
  * The Main class of our project. This is where execution begins.
  */
@@ -68,8 +71,11 @@ public final class Main {
 
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
       String input;
-      List<String[]> data = new ArrayList<String[]>();
+      List<String[]> starData = new ArrayList<String[]>();
+      List<double[]> userData = new ArrayList<double[]>();
       CSVParser csvparser = new CSVParser();
+      Database database = new Database(); 
+      
       CommandHandler commandHandler = new CommandHandler();
       MathBot mathbot = new MathBot();
 
@@ -91,9 +97,9 @@ public final class Main {
           Error.badInputError();
         }
 
-        data.clear();
-        data.addAll(csvparser.getRows());
-        System.out.println("Read " + data.size() + " stars from " + args[0]);
+        starData.clear();
+        starData.addAll(csvparser.getRows());
+        System.out.println("Read " + starData.size() + " stars from " + args[0]);
       });
 
       commandHandler.addCommand("naive_neighbors", (args) -> {
@@ -110,7 +116,7 @@ public final class Main {
           // Clear neighbors ArrayList to ensure we are not adding to 
           // previously computed list of neighbors.
           neighbors.clear();
-          neighbors.addAll(mathbot.naiveNeighbors(k, data, (row1, row2) -> {
+          neighbors.addAll(mathbot.naiveNeighbors(k, starData, (row1, row2) -> {
             double[] r1 = {Double.parseDouble(row1[xIndex]),
                           Double.parseDouble(row1[yIndex]),
                           Double.parseDouble(row1[zIndex])};
@@ -130,7 +136,7 @@ public final class Main {
           String starName = args[1].replaceAll("\"", "");
           List<String[]> filteredData = new ArrayList<String[]>();
           String[] starRow = null;
-          for (String[] row : data) {
+          for (String[] row : starData) {
             if (row[csvparser.getIndex("ProperName")].equals(starName)) {
               starRow = row;
             } else {
@@ -172,6 +178,20 @@ public final class Main {
           System.out.println(row[csvparser.getIndex("StarID")]);
         }
       });
+
+      commandHandler.addCommand("users", (args) -> {
+        String path = args[0];
+        database.clear(); 
+        database.addRelation(User.class);
+        try {
+          database.connect(path);
+          
+        } catch (Exception e) {
+          Error.badInputError(); // TODO is this actually the error you want to throw?
+        }
+
+      });
+
 
       // Read-evaluate-print loop
       while ((input = br.readLine()) != null) {

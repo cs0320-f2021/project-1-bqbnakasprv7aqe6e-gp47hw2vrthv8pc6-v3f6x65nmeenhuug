@@ -13,7 +13,8 @@ public class DatabaseTest {
 	@Test 
 	public void addRelationFunctionalityTest() {
 		try {
-			Database db = new Database("./data/project-1/testDB1.sqlite3");
+			Database db = new Database();
+			db.connect("./data/project-1/testDB1.sqlite3");
 			db.addRelation(Review.class);
 			List<Review> queryResult = db.where("review_text == \"Hello world!\"", "reviews");
       for (Review r : queryResult) {
@@ -27,7 +28,8 @@ public class DatabaseTest {
 	@Test 
 	public void twoRelationTypesTest () {
 		try {
-			Database db = new Database("./data/project-1/testDB1.sqlite3");
+			Database db = new Database();
+			db.connect("./data/project-1/testDB1.sqlite3");
 			db.addRelation(Review.class);
       db.addRelation(User.class);
 			List<Review> queryResult = db.where("review_text == \"Hello world!\"", "reviews");
@@ -42,5 +44,18 @@ public class DatabaseTest {
       e.printStackTrace();
     }
 	}
+
+	@Test 
+	public void rawQueryTest() {
+		try { 
+			Database db = new Database();
+			db.connect("./data/project-1/testDB1.sqlite3");
+			db.addRelation(Review.class);
+			List<Review> result = db.rawQuery("SELECT * FROM reviews", Review.class);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	} 
 
 }

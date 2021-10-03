@@ -26,7 +26,7 @@ import edu.brown.cs.student.main.Error;
 
 public class Database {
   private HashMap<String, Class<? extends DBRelation>> relations = new HashMap<String, Class<? extends DBRelation>>();
-  private static Connection conn = null;
+  private Connection conn = null;
  
   /**
    * Default constructor. Instantiates a connection to the database via Java's 
@@ -36,7 +36,21 @@ public class Database {
    * @throws SQLException 
    * @throws ClassNotFoundException
    */
-  public Database(String filename) throws SQLException, ClassNotFoundException {
+  public Database() {
+
+  }
+  
+  public void clear() {
+    conn = null; 
+    clearRelations();
+  }
+
+  public void clearRelations() { 
+    relations.clear(); 
+  }
+
+  public void connect(String filename) throws SQLException, ClassNotFoundException {
+    this.clear();
     Class.forName("org.sqlite.JDBC");
     String urlToDB = "jdbc:sqlite:" + filename;
     conn = DriverManager.getConnection(urlToDB);
@@ -95,6 +109,8 @@ public class Database {
       String queryAttributes = joiner.toString();
         
       String query = "SELECT " + queryAttributes + " FROM " + relationName + " WHERE " + condition;
+      // TODO could additionally take an array of Strings as input to use SQL api's formatting 
+      // (replacing ? with those strings)
       PreparedStatement prep = conn.prepareStatement(query);
       ResultSet rs = prep.executeQuery();
       
@@ -143,4 +159,77 @@ public class Database {
       throw new BadRelationException("Bad relation: " + relationClass.getName());
     } 
   }
+
+  public <T extends DBRelation> List<T> rawQuery(String query, Class<T> relationClass) throws SQLException, BadRelationException {
+    List<T> queryResult = new ArrayList<T>();
+
+    try {
+      // TODO consider putting this HashMap in the DBRelation abstract class
+      HashMap<String, Method> setterHashMap = new HashMap<String, Method>();
+      Method[] relationMethods = relationClass.getDeclaredMethods();
+      Stream<Method> methodStream = Arrays.stream(relationMethods);
+      Method[] relationAttributeSetters = methodStream.filter((m) ->
+        m.isAnnotationPresent(RelationAttributeSetter.class)).toArray(Method[]::new);
+
+      for (Method setter : relationAttributeSetters) {
+        String attributeName = setter.getAnnotation(RelationAttributeSetter.class).name();
+        setterHashMap.put(attributeName, setter);
+      }
+
+
+        
+      PreparedStatement prep = conn.prepareStatement(query);
+      ResultSet rs = prep.executeQuery();
+      
+      List<String> attributeList = new ArrayList<String>(); 
+      ResultSetMetaData metadata = prep.getMetaData();
+      for (int i = 1; i <= metadata.getColumnCount(); i++) {
+        attributeList.add(metadata.getColumnName(i));
+      }
+      
+      while (rs.next()) {
+        T resultItem = relationClass.getDeclaredConstructor().newInstance();
+        int i = 1;
+        for (String attr : attributeList) {
+          Method setter = setterHashMap.get(attr);
+          Type[] attributeTypes = setter.getGenericParameterTypes();
+          for (Type type : attributeTypes) {
+            String typeName = type.getTypeName();
+            switch (typeName) {
+              case "boolean":
+              case "java.lang.Boolean":
+                setter.invoke(resultItem, rs.getBoolean(i));
+                break;
+              case "int":
+              case "java.Lang.Integer":
+                setter.invoke(resultItem, rs.getInt(i));
+                break;
+              case "float":
+              case "java.lang.Float":
+                setter.invoke(resultItem, rs.getFloat(i));
+                break;
+              case "double":
+              case "java.lang.Double":
+                setter.invoke(resultItem, rs.getDouble(i));
+                break;
+              case "java.lang.String":
+                setter.invoke(resultItem, rs.getString(i));
+                break;
+              default:
+                System.out.println("datatype not in switch statement: " + typeName);
+                break;
+            }
+          }
+          i++;
+        }
+        queryResult.add(resultItem);
+      }
+      rs.close();
+      return queryResult;
+    } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+        | NoSuchMethodException | SecurityException e) {
+      throw new BadRelationException("Bad relation: " + relationClass.getName());
+    } 
+  }
+
 }
