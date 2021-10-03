@@ -180,6 +180,7 @@ public class Database {
       prep = conn.prepareStatement(
               "DELETE FROM " + item.getRelationName() + "WHERE " + condition
       );
+      prep.executeUpdate();
     }
     catch (Exception e){
       e.printStackTrace();
