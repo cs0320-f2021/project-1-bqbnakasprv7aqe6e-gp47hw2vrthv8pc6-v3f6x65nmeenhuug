@@ -259,7 +259,14 @@ public class Database {
     }
 
     for (String value : valueArray) {
-      valueJoiner.add(value);
+      Method valueGetter = getterHashMap.get(value);
+      try {
+        valueJoiner.add(valueGetter.invoke(item).toString());
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        e.printStackTrace();
+      }
     }
 // prep = conn.prepareStatement(INSERT INTO + (column attribute names, comma separated) + VALUES + (actual values for
     // attributes, comma separated))
