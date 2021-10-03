@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableMap;
 import org.eclipse.jetty.io.ssl.SslClientConnectionFactory;
 
 import freemarker.template.Configuration;
+import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
 // import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
 // import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
 import joptsimple.OptionParser;
@@ -206,9 +207,9 @@ public final class Main {
 
       commandHandler.addCommand("similar", (args) -> {
         int k = Integer.parseInt(args[0]); 
-        List<String> neighbors = new ArrayList<String>(); 
         List<KVPair<User, double[]>> dataToSearch = null; 
         double[] targetPoint = new double[3]; 
+
         if (args.length == 2) {
           String userID = args[1];
           List<KVPair<User, double[]>> filteredData = new ArrayList<KVPair<User, double[]>>();
@@ -231,12 +232,60 @@ public final class Main {
         }
         KDTree<User> tree = new KDTree<User>(dataToSearch);
         List<KVPair<User, double[]>> result = tree.kNearestNeighbors(targetPoint, k);
-        neighbors.clear();
         for (KVPair<User, double[]> neighbor : result) {
           System.out.println(neighbor.getKey().getUserID());
         }
       });
 
+      commandHandler.addCommand("classify", (args) -> {
+        int k = Integer.parseInt(args[0]); 
+        List<KVPair<User, double[]>> dataToSearch = null; 
+        double[] targetPoint = new double[3]; 
+
+        if (args.length == 2) {
+          String userID = args[1];
+          List<KVPair<User, double[]>> filteredData = new ArrayList<KVPair<User, double[]>>();
+          KVPair<User, double[]> userRow = null;
+          for (KVPair<User, double[]> row : userData) {
+            if (row.getKey().getUserID().equals(userID)) {
+              userRow = row;
+            } else {
+              filteredData.add(row);
+            }
+          }
+          targetPoint = userRow.getValue();
+        } else if (args.length == 4) {
+          dataToSearch = userData;
+
+          double[] parsedCoords = {Double.parseDouble(args[1]),
+                                   Double.parseDouble(args[2]),
+                                   Double.parseDouble(args[3])};
+          targetPoint = parsedCoords;
+        }
+        KDTree<User> tree = new KDTree<User>(dataToSearch);
+        List<KVPair<User, double[]>> result = tree.kNearestNeighbors(targetPoint, k);
+        String[] horoscopes = {"Aries",
+                               "Taurus",
+                               "Gemini",
+                               "Cancer",
+                               "Leo", 
+                               "Virgo", 
+                               "Libra", 
+                               "Scorpio",
+                               "Sagittarius", 
+                               "Capricorn",
+                               "Aquarius", 
+                               "Pisces"};
+        for (String sign : horoscopes) {
+          int count = 0; 
+          for (KVPair<User, double[]> neighbor : result) {
+            if (neighbor.getKey().getHoroscope().matches("(?i).*" + sign + ".*")) {
+              count++; 
+            }
+          }
+          System.out.println(sign + ": " + count);
+        }
+      });
 
       // Read-evaluate-print loop
       while ((input = br.readLine()) != null) {
