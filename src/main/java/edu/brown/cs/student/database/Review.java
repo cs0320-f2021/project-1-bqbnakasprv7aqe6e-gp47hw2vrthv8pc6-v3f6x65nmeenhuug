@@ -6,7 +6,16 @@ public class Review extends DBRelation {
   private String reviewSummary;
   private String reviewDate;
   private int id;
-  
+
+  @Override
+  public String getPrimaryKeyAttribute() {
+    return "user_id";
+  }
+
+  @Override
+  public String getPrimaryKeyValue() {
+    return String.valueOf(this.id);
+  }
 
   @Override
   public String getRelationName() {
@@ -57,14 +66,14 @@ public class Review extends DBRelation {
   @RelationAttributeSetter(
     name="review_date"
   )
-  public void setReviewData(String reviewDate) {
+  public void setReviewDate(String reviewDate) {
     this.reviewDate = reviewDate;
   }
 
   @RelationAttributeGetter(
     name="id"
   )
-  public int getId() {
+  public int getID() {
     return this.id;
   }
 

@@ -231,5 +231,59 @@ public class Database {
       throw new BadRelationException("Bad relation: " + relationClass.getName());
     } 
   }
+  
+  public <T extends DBRelation> void insert(T item) {
+    Class<? extends DBRelation> relationClass = item.getClass();
+    HashMap<String, Method> getterHashMap = new HashMap<String, Method>();
+    Method[] relationMethods = relationClass.getDeclaredMethods();
+    Stream<Method> methodStream = Arrays.stream(relationMethods);
+    Method[] relationAttributeSetters = methodStream.filter((m) ->
+        m.isAnnotationPresent(RelationAttributeGetter.class)).toArray(Method[]::new);
+
+    for (Method getter : relationAttributeSetters) {
+      String attributeName = getter.getAnnotation(RelationAttributeGetter.class).name();
+      getterHashMap.put(attributeName, getter);
+    }
+
+    String[] attributeArray = getterHashMap.keySet().toArray(String[]::new);
+    String[] valueArray = getterHashMap.entrySet().toArray(String[]::new);
+    StringJoiner attributeJoiner = new StringJoiner(",");
+    StringJoiner valueJoiner = new StringJoiner(",");
+
+    for (String attributeName : attributeArray) {
+      attributeJoiner.add(attributeName);
+    }
+
+    for (String value : valueArray) {
+      valueJoiner.add(value);
+    }
+// prep = conn.prepareStatement(INSERT INTO + (column attribute names, comma separated) + VALUES + (actual values for
+    // attributes, comma separated))
+    PreparedStatement prep;
+
+    try {
+      prep = conn.prepareStatement(
+          "INSERT INTO " + attributeJoiner + " VALUES " + valueJoiner + ";");
+      prep.addBatch();
+      prep.executeBatch();
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    }
+  }
+
+  public <T extends DBRelation> void delete(T item) {
+    String condition = item.getPrimaryKeyAttribute() +" = " + item.getPrimaryKeyValue();
+    PreparedStatement prep;
+
+    try {
+      prep = conn.prepareStatement(
+          "DELETE FROM " + item.getRelationName() + "WHERE " + condition
+      );
+      prep.executeUpdate();
+    }
+    catch (Exception e){
+      e.printStackTrace();
+    }
+  }
 
 }
