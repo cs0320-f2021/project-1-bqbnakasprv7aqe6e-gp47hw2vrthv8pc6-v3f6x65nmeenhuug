@@ -9,7 +9,7 @@ public class Review extends DBRelation {
 
   @Override
   public String getPrimaryKeyAttribute() {
-    return "user_id";
+    return "id";
   }
 
   @Override

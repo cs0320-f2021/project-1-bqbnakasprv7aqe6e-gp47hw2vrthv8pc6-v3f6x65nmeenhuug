@@ -281,7 +281,6 @@ public class Database {
 
       String sql = "INSERT INTO " + item.getRelationName() + "(" + attributeJoiner + ")" +
           " VALUES " + "(" + parameters + ");";
-      System.out.println(sql);
       PreparedStatement prep = conn.prepareStatement(sql);
 
       int c = 1;
@@ -298,12 +297,12 @@ public class Database {
   }
 
   public <T extends DBRelation> void delete(T item) {
-    String condition = item.getPrimaryKeyAttribute() +" = " + item.getPrimaryKeyValue();
-    String sql = "DELETE FROM " + item.getRelationName() + "WHERE " + condition;
-
+    String condition = item.getPrimaryKeyAttribute() +" = ?";
+    String sql = "DELETE FROM " + item.getRelationName() + " WHERE " + condition;
     try {
-      Statement state = conn.createStatement();
-      state.executeUpdate(sql);
+      PreparedStatement prep = conn.prepareStatement(sql);
+      prep.setObject(1, item.getPrimaryKeyValue());
+      prep.executeUpdate();
     }
     catch (Exception e) {
       e.printStackTrace();
