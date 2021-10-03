@@ -292,7 +292,7 @@ public class Database {
       );
       prep.executeUpdate();
     }
-    catch (Exception e){
+    catch (Exception e) {
       e.printStackTrace();
     }
   }
