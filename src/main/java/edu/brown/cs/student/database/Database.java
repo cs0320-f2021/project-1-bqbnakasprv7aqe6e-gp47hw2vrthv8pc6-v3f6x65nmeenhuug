@@ -271,14 +271,27 @@ public class Database {
     }
 // prep = conn.prepareStatement(INSERT INTO + (column attribute names, comma separated) + VALUES + (actual values for
     // attributes, comma separated))
-    PreparedStatement prep;
-    String attribute = attributeJoiner.toString();
-    String value = valueJoiner.toString();
     try {
-      Statement state = conn.createStatement();
-      String sql = "INSERT INTO" + item.getRelationName() + "(" + attribute + ")" +
-              " VALUES " + "(" + value + ");";
-      state.executeUpdate(sql);
+      int numValues = attributeArray.length;
+      String parameters = "?";
+
+      for (int i = 1; i < numValues; i++) {
+        parameters = parameters + ", ?";
+      }
+
+      String sql = "INSERT INTO " + item.getRelationName() + "(" + attributeJoiner + ")" +
+          " VALUES " + "(" + parameters + ");";
+      System.out.println(sql);
+      PreparedStatement prep = conn.prepareStatement(sql);
+
+      int c = 1;
+      for (String attributeName : attributeArray) {
+        prep.setObject(c, attributeName);
+        c++;
+      }
+
+      prep.executeUpdate();
+      prep.close();
     } catch (SQLException throwables) {
       throwables.printStackTrace();
     }
