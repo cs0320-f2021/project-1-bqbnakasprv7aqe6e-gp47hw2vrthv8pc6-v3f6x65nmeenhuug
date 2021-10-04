@@ -134,7 +134,7 @@ To test stars-related commands:
 `./cs32-test src/test/system/stars/*.test`
 
 To test users-related commands: 
-`./cs32-test src/test/system.users/*.test`
+`./cs32-test src/test/system/kdtree/*.test`
 
 To run all unit tests: 
 `mvn test`
