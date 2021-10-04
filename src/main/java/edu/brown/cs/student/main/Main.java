@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableMap;
 import org.eclipse.jetty.io.ssl.SslClientConnectionFactory;
 
 import freemarker.template.Configuration;
+import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
 //import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
 // import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
 // import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
@@ -195,10 +196,10 @@ public final class Main {
             double[] point = {Double.parseDouble(user.getWeight().replaceAll("\\D", "")),
                               Double.parseDouble(user.getHeight().replaceAll("\\D", "")),
                               Double.parseDouble(user.getAge().replaceAll("\\D", ""))};
-                            
             KVPair<User, double[]> row = new KVPair<User, double[]>(user, point);
             userData.add(row);
           }
+          System.out.println("Loaded " + userData.size() + " users from " + path + "");
         } catch (Exception e) {
           e.printStackTrace();
           Error.badInputError(); // TODO is this actually the error you want to throw?
@@ -238,18 +239,17 @@ public final class Main {
 
       commandHandler.addCommand("classify", (args) -> {
         int k = Integer.parseInt(args[0]); 
-        List<KVPair<User, double[]>> dataToSearch = null; 
+        List<KVPair<User, double[]>> dataToSearch = new ArrayList<KVPair<User, double[]>>(); 
         double[] targetPoint = new double[3]; 
 
         if (args.length == 2) {
           String userID = args[1];
-          List<KVPair<User, double[]>> filteredData = new ArrayList<KVPair<User, double[]>>();
           KVPair<User, double[]> userRow = null;
           for (KVPair<User, double[]> row : userData) {
             if (row.getKey().getUserID().equals(userID)) {
               userRow = row;
             } else {
-              filteredData.add(row);
+              dataToSearch.add(row);
             }
           }
           targetPoint = userRow.getValue();

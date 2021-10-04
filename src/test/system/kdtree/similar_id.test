@@ -4,7 +4,7 @@ INPUT
 users data/project-1/runwaySMALL.sqlite3
 similar 5 151944
 OUTPUT
-Loaded 15 users from data/project-1./runwaySMALL.sqlite3
+Loaded 15 users from data/project-1/runwaySMALL.sqlite3
 829124
 391778
 420272

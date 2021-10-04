@@ -8,6 +8,8 @@ import java.lang.StackWalker.Option;
 import java.util.ArrayList;
 import java.util.Comparator;
 import edu.brown.cs.student.main.MathBot;
+import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
+
 import java.util.Optional;
 import edu.brown.cs.student.ds.KVPair;
 
@@ -23,7 +25,7 @@ public class KDTree<K> {
   private int dimension = 1;
   private Optional<BinaryNode<K, double[]>> rootNode; 
   private static MathBot mathbot = new MathBot();
-
+  private List<KVPair<K, double[]>> neighbors = new ArrayList<KVPair<K, double[]>>(); 
   /**
    * Default constructor.
    * 
@@ -62,7 +64,7 @@ public class KDTree<K> {
       return (int) Math.round(e1.getValue()[sortIndex] - e2.getValue()[sortIndex]);
     });
 
-    int medianIndex = (itemsList.size() / 2) - 1;
+    int medianIndex = (itemsList.size() / 2);
     KVPair<K, double[]> median = itemsList.get(medianIndex);
     tree = new BinaryNode<K, double[]>(median, 
       constructKDTree(itemsList.subList(0, medianIndex), depth += 1), 
@@ -78,8 +80,15 @@ public class KDTree<K> {
    * @return a list of key-value pairs, the k nearest neighbors to `point`
    */
   public List<KVPair<K, double[]>> kNearestNeighbors(double[] point, int k) {
-    List<KVPair<K, double[]>> neighbors = new ArrayList<KVPair<K, double[]>>();
-    return nearestNeighborRecursion(point, k, 0, this.rootNode, neighbors);
+    neighbors.clear();
+    nearestNeighborRecursion(point, k, 0, this.rootNode);
+    Collections.sort(neighbors, (e1, e2) -> {
+      double dist1 = mathbot.distance(point, e1.getValue());
+      double dist2 = mathbot.distance(point, e2.getValue());
+
+      return (int) Math.signum(dist1 - dist2);
+    });
+    return neighbors;
   }
 
   /**
@@ -94,15 +103,15 @@ public class KDTree<K> {
    * @return a list of key-value pairs, the k nearest neighbors for that 
    *  particular recursion.
    */
-  private List<KVPair<K, double[]>> nearestNeighborRecursion(
+  private void nearestNeighborRecursion(
     double[] point, 
     int k, 
     int depth, 
-    Optional<BinaryNode<K, double[]>> optionalCurrentNode, 
-    List<KVPair<K, double[]>> neighbors) 
+    Optional<BinaryNode<K, double[]>> optionalCurrentNode)
     {
+  
     if (optionalCurrentNode.isEmpty()) {
-      return neighbors; 
+      return;
     } 
     BinaryNode<K, double[]> currentNode = optionalCurrentNode.get();
     neighbors.add(currentNode.getContent());
@@ -110,23 +119,25 @@ public class KDTree<K> {
       double dist1 = mathbot.distance(point, e1.getValue());
       double dist2 = mathbot.distance(point, e2.getValue());
 
-      return (int) Math.round(dist1 - dist2);
+      return (int) Math.signum(dist1 - dist2);
     });
+
     if (neighbors.size() > k) {
-      neighbors.remove(neighbors.size() - 1);
+      neighbors = neighbors.subList(0, k);
     }
 
     int axis = depth % dimension;
     if (mathbot.distance(point, neighbors.get(neighbors.size() - 1).getValue()) 
-      > Math.abs(point[axis] - currentNode.getContent().getValue()[axis]))
-      {
-        nearestNeighborRecursion(point, k, depth += 1, currentNode.getLeftNode(), neighbors);
-        nearestNeighborRecursion(point, k, depth += 1, currentNode.getRightNode(), neighbors);
+      > Math.abs(point[axis] - currentNode.getContent().getValue()[axis]) 
+      || neighbors.size() < k)
+    {
+      nearestNeighborRecursion(point, k, depth += 1, currentNode.getLeftNode());
+      nearestNeighborRecursion(point, k, depth += 1, currentNode.getRightNode());
     } else if (currentNode.getContent().getValue()[axis] < point[axis]) {
-      nearestNeighborRecursion(point, k, depth += 1, currentNode.getRightNode(), neighbors);
+      nearestNeighborRecursion(point, k, depth += 1, currentNode.getRightNode());
     } else { 
-      nearestNeighborRecursion(point, k, depth += 1, currentNode.getLeftNode(), neighbors);
+      nearestNeighborRecursion(point, k, depth += 1, currentNode.getLeftNode());
     }
-    return neighbors;
+    // return;
   }
 }
