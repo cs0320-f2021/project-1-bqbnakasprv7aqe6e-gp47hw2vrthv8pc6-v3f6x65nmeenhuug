@@ -120,6 +120,7 @@ public class DatabaseTest {
 		}
 	}
 
+	@Test
 	public void testUpdate() {
 		try {
 			Database db = new Database();
@@ -138,14 +139,16 @@ public class DatabaseTest {
 			List<Review> queryResult = db.where("review_text == \"mind-blowing, " +
 					"life-changing, never-to-be-forgotten\"", "reviews");
 
+			rave.setReviewDate("02.13.1492");
+
 			for (Review r : queryResult) {
 				assertEquals(r.getID(), 4);
 			}
 
-			List<Review> queryResult2 = db.where("review_date == \"10.03.2021\"", "reviews");
+			List<Review> queryResult2 = db.where("review_summary == \"very pleased\"", "reviews");
 
 			for (Review r : queryResult2) {
-				assertEquals(r.getID(), 4);
+				assertEquals(r.getReviewDate(), "02.13.1492");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
