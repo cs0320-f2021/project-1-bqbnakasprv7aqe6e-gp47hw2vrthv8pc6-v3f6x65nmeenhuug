@@ -8,6 +8,8 @@ import java.util.List;
 import org.junit.Test;
 
 import edu.brown.cs.student.database.Database;
+import edu.brown.cs.student.database.relations.Review;
+import edu.brown.cs.student.database.relations.User;
 
 public class DatabaseTest {
 
@@ -17,7 +19,7 @@ public class DatabaseTest {
 			Database db = new Database();
 			db.connect("./data/project-1/testDB1.sqlite3");
 			db.addRelation(Review.class);
-			List<Review> queryResult = db.where("review_text == \"Hello world!\"", "reviews");
+			List<Review> queryResult = db.where("review_text == ?", "reviews", new String[]{"Hello world!"});
       for (Review r : queryResult) {
         assertEquals(r.getID(), 1);
       }
@@ -33,12 +35,12 @@ public class DatabaseTest {
 			db.connect("./data/project-1/testDB1.sqlite3");
 			db.addRelation(Review.class);
       db.addRelation(User.class);
-			List<Review> queryResult = db.where("review_text == \"Hello world!\"", "reviews");
+			List<Review> queryResult = db.where("review_text == ?", "reviews", new String[]{"Hello world!"});
 
       for (Review r : queryResult) {
         assertEquals(r.getID(), 1);
       }
-			List<User> queryResult2 = db.where("user_id == \"1\"", "users");
+			List<User> queryResult2 = db.where("user_id == ?", "users", new String[]{"1"});
 
       for (User u : queryResult2) {
         assertEquals(u.getUserID(), "1");
@@ -77,14 +79,14 @@ public class DatabaseTest {
 
 			db.insert(rave);
 
-			List<Review> queryResult = db.where("review_text == \"mind-blowing, " +
-					"life-changing, never-to-be-forgotten\"", "reviews");
+			List<Review> queryResult = db.where("review_text == ?", "reviews", 
+					new String[]{"mind-blowing, life-changing, never-to-be-forgotten"});
 
 			for (Review r : queryResult) {
 				assertEquals(r.getID(), 4);
 			}
 
-			List<Review> queryResult2 = db.where("review_date == \"10.03.2021\"", "reviews");
+			List<Review> queryResult2 = db.where("review_date == ?", "reviews", new String[]{"10.03.2021"});
 
 			for (Review r : queryResult2) {
 				assertEquals(r.getID(), 4);
@@ -102,18 +104,18 @@ public class DatabaseTest {
 			db.addRelation(Review.class);
 			db.addRelation(User.class);
 
-			List<Review> queryResult = db.where("review_text == \"Hello world!\"", "reviews");
+			List<Review> queryResult = db.where("review_text == ?", "reviews", new String[]{"Hello world!"});
 
 			for (Review r : queryResult) {
 				db.delete(r);
-				assertThrows(Exception.class, () -> db.where("review_text == \"Hello world!\"", "reviews"));
+				assertThrows(Exception.class, () -> db.where("review_text == ?", "reviews", new String[]{"Hello world!"}));
 			}
 
-			List<User> queryResult2 = db.where("user_id == \"1\"", "users");
+			List<User> queryResult2 = db.where("user_id == ?", "users", new String[]{"1"});
 
 			for (User u : queryResult2) {
 				db.delete(u);
-				assertThrows(Exception.class, () -> db.where("user_id == \"1\"", "users"));
+				assertThrows(Exception.class, () -> db.where("user_id == ?", "users", new String[]{"1"}));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -136,8 +138,10 @@ public class DatabaseTest {
 
 			db.insert(rave);
 
-			List<Review> queryResult = db.where("review_text == \"mind-blowing, " +
-					"life-changing, never-to-be-forgotten\"", "reviews");
+			// List<Review> queryResult = db.where("review_text == \"mind-blowing, " +
+			// 		"life-changing, never-to-be-forgotten\"", "reviews");
+			List<Review> queryResult = db.where("review_text == ?", "reviews", 
+					new String[]{"mind-blowing, life-changing, never-to-be-forgotten"});
 
 			rave.setReviewDate("02.13.1492");
 
@@ -145,7 +149,7 @@ public class DatabaseTest {
 				assertEquals(r.getID(), 4);
 			}
 
-			List<Review> queryResult2 = db.where("review_summary == \"very pleased\"", "reviews");
+			List<Review> queryResult2 = db.where("review_summary == ?", "reviews", new String[]{"very pleased"});
 
 			for (Review r : queryResult2) {
 				assertEquals(r.getReviewDate(), "02.13.1492");

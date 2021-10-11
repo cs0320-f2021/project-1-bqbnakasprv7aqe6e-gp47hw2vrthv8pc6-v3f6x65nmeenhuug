@@ -101,7 +101,7 @@ public class Database {
    * @throws BadRelationException
    * @throws SQLException
    */
-  public <T extends DBRelation> List<T> where(String condition, String relationName) throws BadRelationException, SQLException {
+  public <T extends DBRelation> List<T> where(String condition, String relationName, String[] parameters) throws BadRelationException, SQLException {
     @SuppressWarnings("unchecked") // TODO explain why this is okay/talk to TA
     Class<T> relationClass = (Class<T>) relations.get(relationName);
 
@@ -136,6 +136,11 @@ public class Database {
       // TODO could additionally take an array of Strings as input to use SQL api's formatting 
       // (replacing ? with those strings)
       PreparedStatement prep = conn.prepareStatement(query);
+      int k = 1; 
+      for (String param : parameters) {
+        prep.setString(k, param);
+        k++;
+      }
       ResultSet rs = prep.executeQuery();
       
       
@@ -210,8 +215,6 @@ public class Database {
         setterHashMap.put(attributeName, setter);
       }
 
-
-        
       PreparedStatement prep = conn.prepareStatement(query);
       ResultSet rs = prep.executeQuery();
       

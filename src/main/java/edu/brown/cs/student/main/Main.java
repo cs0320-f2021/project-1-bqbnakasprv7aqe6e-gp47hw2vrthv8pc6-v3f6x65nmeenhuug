@@ -27,8 +27,8 @@ import spark.template.freemarker.FreeMarkerEngine;
 import java.util.ArrayList;
 import java.util.List;
 import edu.brown.cs.student.database.Database;
+import edu.brown.cs.student.database.relations.User;
 import edu.brown.cs.student.database.DBRelation;
-import edu.brown.cs.student.database.User;
 import edu.brown.cs.student.ds.KVPair;
 import edu.brown.cs.student.ds.tree.KDTree;
 
@@ -82,6 +82,22 @@ public final class Main {
       MathBot mathbot = new MathBot();
 
       // Add commands to CommandHandler
+      commandHandler.addCommand("recsys_load", (args) -> {
+        if (args[0].equals("responses")) {
+          /*
+          TODO 
+          1. Load API data using API aggregator 
+          2. Convert this API data to a HashMap with the ID as the value 
+          3. Obtain users from SQL database's skills relation,
+          4. For each of the above users perform a query on that user ID on 
+             each relation (positive, negative, interests), store those in 
+             some User object.
+          3. Use Java builtin HashMap.merge() to combine the two HashMaps
+      
+          */
+        }
+      });
+
       commandHandler.addCommand("add", (args) -> {
         double result = mathbot.add(Double.parseDouble(args[0]), Double.parseDouble(args[1]));
         System.out.println(result);
