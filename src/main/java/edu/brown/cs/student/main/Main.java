@@ -86,14 +86,27 @@ public final class Main {
         if (args[0].equals("responses")) {
           /*
           TODO 
-          1. Load API data using API aggregator 
+          1. Load API data using API aggregator with StudentFormResponse type
           2. Convert this API data to a HashMap with the ID as the value 
           3. Obtain users from SQL database's skills relation,
           4. For each of the above users perform a query on that user ID on 
              each relation (positive, negative, interests), store those in 
              some User object.
-          3. Use Java builtin HashMap.merge() to combine the two HashMaps
-      
+          5. Create hashmap of above results with ID as value
+          6. Use Java builtin HashMap.merge() to combine the two HashMaps
+          7. Encode data: 
+            - `positive`: bag of words model (want variation)
+            - `negative`: inverted bag of words model (1 if not present, 0 if
+              present) (want variation) 
+            - availability: bag of words (want similarity)
+            - meeting: bag of words (want similarity)
+            - grade: (want variation)
+            - years of experience: use numerical value (want variation)
+            - preferred language (optional): bag of words (want variation)
+            - marginalized group (optional): bag of words (want variation)
+            - prefer group (optional): 1 or 0?
+          8. Use bloomfilter for parameters we want variation in and kdtree 
+             for params we want proximity in? 
           */
         }
       });
