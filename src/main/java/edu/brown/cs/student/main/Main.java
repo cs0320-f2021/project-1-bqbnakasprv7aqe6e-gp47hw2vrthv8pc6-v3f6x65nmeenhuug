@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.sql.SQLException;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
@@ -14,6 +15,7 @@ import com.google.common.collect.ImmutableMap;
 import org.eclipse.jetty.io.ssl.SslClientConnectionFactory;
 
 import freemarker.template.Configuration;
+import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import spark.ExceptionHandler;
@@ -82,6 +84,16 @@ public final class Main {
       MathBot mathbot = new MathBot();
 
       // Add commands to CommandHandler
+      commandHandler.addCommand("database", (args) -> {
+        try {
+          database.connect(args[0]);
+        } catch (ClassNotFoundException e) {
+          System.out.println("An unexpected error has occurred: could not find org.sqlite.JDBC");
+        } catch (SQLException e) {
+          Error.badInputError();
+        }
+      });
+
       commandHandler.addCommand("recsys_load", (args) -> {
         if (args[0].equals("responses")) {
           /*
