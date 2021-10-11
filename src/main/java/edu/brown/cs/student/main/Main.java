@@ -14,10 +14,6 @@ import com.google.common.collect.ImmutableMap;
 import org.eclipse.jetty.io.ssl.SslClientConnectionFactory;
 
 import freemarker.template.Configuration;
-import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
-//import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
-// import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
-// import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import spark.ExceptionHandler;

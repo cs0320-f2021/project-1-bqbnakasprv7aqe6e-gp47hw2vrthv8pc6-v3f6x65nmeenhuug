@@ -2,6 +2,9 @@ package edu.brown.cs.student.main;
 
 
 import org.junit.Test;
+
+import edu.brown.cs.student.main.exceptions.NoSuchCommandException;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import java.util.List;
@@ -100,5 +103,24 @@ public class CommandHandlerTest {
       assertEquals(str, expected2[i]);
       i += 1;
     }
+  }
+
+  @Test 
+  public void removeCommandTest() {
+    CommandHandler cmdHandler = new CommandHandler();
+    cmdHandler.addCommand("test", (args) -> {
+      System.out.println("This should not be printed.");
+    });
+
+    cmdHandler.removeCommand("test");
+
+    Boolean caughtException = false;
+    try {
+      cmdHandler.parseCommand("test");
+    } catch (NoSuchCommandException e) {
+      caughtException = true;
+    }
+
+    assert(caughtException);
   }
 }

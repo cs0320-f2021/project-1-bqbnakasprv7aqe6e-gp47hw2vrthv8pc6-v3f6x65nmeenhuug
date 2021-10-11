@@ -2,6 +2,8 @@ package edu.brown.cs.student.main;
 
 import java.util.function.Consumer;
 
+import edu.brown.cs.student.main.exceptions.NoSuchCommandException;
+
 import java.util.Set;
 import java.util.HashSet;
 import java.util.HashMap;
@@ -24,6 +26,16 @@ public class CommandHandler {
    */
   public CommandHandler() {
 
+  }
+
+  /**
+   * Remove the given command from the set of commands this instance handles.
+   * 
+   * @param command
+   * @param func
+   */
+  public void removeCommand(String command) {
+    commands.remove(command);
   }
 
   /**
@@ -71,13 +83,13 @@ public class CommandHandler {
    * @param input A string
    * @throws Exception In case the command is not in the CommandParser's HashMap
    */
-  public void parseCommand(String input) throws Exception {
+  public void parseCommand(String input) throws NoSuchCommandException {
     String[] arguments = this.parseArgs(input);
     Consumer<String[]> func = commands.get(arguments[0]);
 
     // TODO make exception more descriptive, or perhaps use Error class?
     if (Objects.isNull(func)) {
-      throw new Exception("Invalid command");
+      throw new NoSuchCommandException("No such command: " + arguments[0]);
     }
     // Obtain function parameters, i.e., the argument String[] without the 
     // command itself.

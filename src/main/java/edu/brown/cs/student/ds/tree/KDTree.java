@@ -8,7 +8,7 @@ import java.lang.StackWalker.Option;
 import java.util.ArrayList;
 import java.util.Comparator;
 import edu.brown.cs.student.main.MathBot;
-import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
+// import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
 
 import java.util.Optional;
 import edu.brown.cs.student.ds.KVPair;
