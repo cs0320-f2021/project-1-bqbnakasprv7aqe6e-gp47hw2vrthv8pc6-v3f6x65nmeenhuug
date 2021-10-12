@@ -14,6 +14,7 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 
 import edu.brown.cs.student.recommender.APIClass;
+import edu.brown.cs.student.recommender.interestsClass;
 import org.eclipse.jetty.io.ssl.SslClientConnectionFactory;
 
 import freemarker.template.Configuration;
@@ -136,8 +137,14 @@ public final class Main {
              for params we want proximity in? 
           */
           try {
+            database.rawQuery("SELECT * FROM interests", interestsClass.class);
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+          try {
             List<Object> apiData = apiAggregator.getData("APIClass");
             System.out.println(apiData);
+
 
             // not sure about value type here
             HashMap<Integer, Object> discreteTraitsMap = new HashMap();
