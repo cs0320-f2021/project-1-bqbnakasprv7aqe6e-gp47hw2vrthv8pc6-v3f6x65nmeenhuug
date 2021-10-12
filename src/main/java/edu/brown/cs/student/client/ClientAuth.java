@@ -17,4 +17,9 @@ public class ClientAuth {
     FileParser parser = new FileParser("secret/apiKey.txt");
     return parser.readNewLine();
   }
+
+  public static String getUsername() {
+    FileParser parser = new FileParser("secret/username.txt");
+    return parser.readNewLine();
+  }
 }
