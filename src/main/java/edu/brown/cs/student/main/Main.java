@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
@@ -33,6 +34,7 @@ import edu.brown.cs.student.database.relations.User;
 import edu.brown.cs.student.database.DBRelation;
 import edu.brown.cs.student.ds.KVPair;
 import edu.brown.cs.student.ds.tree.KDTree;
+import edu.brown.cs.student.recommender.APIClass;
 
 /**
  * The Main class of our project. This is where execution begins.
@@ -94,6 +96,8 @@ public final class Main {
       CommandHandler commandHandler = new CommandHandler();
       MathBot mathbot = new MathBot();
 
+      ApiAggregator apiAggregator = new ApiAggregator();
+
       // Add commands to CommandHandler
       commandHandler.addCommand("database", (args) -> {
         try {
@@ -131,6 +135,24 @@ public final class Main {
           8. Use bloomfilter for parameters we want variation in and kdtree 
              for params we want proximity in? 
           */
+          try {
+            List<Object> apiData = apiAggregator.getData("APIClass");
+            System.out.println(apiData);
+
+            // not sure about value type here
+            HashMap<Integer, Object> discreteTraitsMap = new HashMap();
+            List<Object> continuousTraitsList = new ArrayList();
+
+            List<User> userList = database.rawQuery("SELECT * FROM users", User.class);
+
+            for (User user : userList) {
+              // populate map
+              // populate list
+            }
+          } catch (Exception e) {
+            e.printStackTrace();
+            Error.badInputError();
+          }
         }
       });
 

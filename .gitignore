@@ -7,3 +7,5 @@ target/
 *.prefs
 project-1.iml
 runwayBIG.json
+secret/apiKey.txt
+secret/username.txt

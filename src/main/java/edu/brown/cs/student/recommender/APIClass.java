@@ -96,4 +96,4 @@ public class APIClass {
 // Create a class for each table of the ORM to fil the fields of that class with column types
 // each user is a new instance of the class
 
-// use this class for APIaggregator
+// use this class for ApiAggregator

@@ -37,7 +37,7 @@ public class ClientRequestGenerator {
     // Hint: the POST param should be: HttpRequest.BodyPublishers.ofString("{\"name\":\"" + param + "\"}")
     return HttpRequest.newBuilder()
             .uri(URI.create(reqUri))
-            .header("x-api-key",apiKey)
+            .header("x-api-key", apiKey)
             .POST(HttpRequest.BodyPublishers.ofString("{\"auth\":\"" + username +"\"}"))
             .build();
   }
