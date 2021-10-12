@@ -31,7 +31,7 @@ public abstract class DBRelation{
 	 *
 	 * @return
 	 */
-	public abstract String getPrimaryKeyValue();
+	public abstract Object getPrimaryKeyValue();
 
 	/**
 	 * TODO
