@@ -12,10 +12,10 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
+import edu.brown.cs.student.recommender.APIClass;
 import org.eclipse.jetty.io.ssl.SslClientConnectionFactory;
 
 import freemarker.template.Configuration;
-import jdk.tools.jlink.internal.SymLinkResourcePoolEntry;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import spark.ExceptionHandler;
@@ -72,6 +72,17 @@ public final class Main {
     if (options.has("gui")) {
       runSparkServer((int) options.valueOf("port"));
     }
+
+    /*ApiAggregator api = new ApiAggregator();
+    try {
+      List<Object> apiDatalist = api.getData("responses");
+      System.out.println(apiDatalist.size());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+     */
+
 
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
       String input;

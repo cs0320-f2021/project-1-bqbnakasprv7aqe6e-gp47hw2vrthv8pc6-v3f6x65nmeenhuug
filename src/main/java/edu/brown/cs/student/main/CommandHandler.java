@@ -32,7 +32,7 @@ public class CommandHandler {
    * Remove the given command from the set of commands this instance handles.
    * 
    * @param command
-   * @param func
+   * @param
    */
   public void removeCommand(String command) {
     commands.remove(command);

@@ -27,4 +27,17 @@ public class ClientRequestGenerator {
               .build();
     return request;
   }
+
+  public static HttpRequest getSecuredPostRequest(String param) {
+    String reqUri = "https://runwayapi.herokuapp.com/integration";
+    String apiKey = ClientAuth.getApiKey();
+
+    // TODO build and return a new POST HttpRequest with an api apikey header, and the param in the body.
+    // Hint: the POST param should be: HttpRequest.BodyPublishers.ofString("{\"name\":\"" + param + "\"}")
+    return HttpRequest.newBuilder()
+            .uri(URI.create(reqUri))
+            .header("x-api-key", "jgXhx4mnOw")
+            .POST(HttpRequest.BodyPublishers.ofString("{\"auth\":\"dburdell\"}"))
+            .build();
+  }
 }

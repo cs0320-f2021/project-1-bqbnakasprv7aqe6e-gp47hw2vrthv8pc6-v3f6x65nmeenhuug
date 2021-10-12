@@ -99,7 +99,6 @@ public class KDTree<K> {
    * @param depth integer representing number of layers that have been traversed
    * @param optionalCurrentNode optional current node that the algorithm is 
    *  visiting.
-   * @param neighbors a mutating list of neighbors 
    * @return a list of key-value pairs, the k nearest neighbors for that 
    *  particular recursion.
    */

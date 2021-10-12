@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import edu.brown.cs.student.client.ApiClient;
 import edu.brown.cs.student.client.ClientRequestGenerator;
+import edu.brown.cs.student.recommender.APIClass;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -21,12 +22,8 @@ public class ApiAggregator {
         Gson gson = new Gson();
         Type type = setType(dataType);
         String filename = "https://runwayapi.herokuapp.com/" + dataType + "-";
-        String response1 = client.makeRequest(ClientRequestGenerator.getSecuredRequest(filename + "one?auth="));
-        String response2 = client.makeRequest(ClientRequestGenerator.getSecuredRequest(filename + "three?auth="));
-        response1 = generateExtras("one",filename,response1);
-        response2 = generateExtras("two",filename,response2);
-        String best_response = response1.length() > response2.length() ? response1 : response2;
-        return gson.fromJson(best_response,type);
+        String response = client.makeRequest(ClientRequestGenerator.getSecuredPostRequest("yeet"));
+        return gson.fromJson(response,type);
     }
 
     /**
@@ -55,12 +52,8 @@ public class ApiAggregator {
      * @throws Exception
      */
     public Type setType(String dataType) throws Exception {
-        Type type;
-
         /*
-
-        Example usage from Project 1: Sprint...
-
+        Type type;
         if(dataType.equals("rent")){
             return new TypeToken<List<Rent>>(){}.getType();
         }else if(dataType.equals("reviews")){
@@ -70,11 +63,12 @@ public class ApiAggregator {
         }else {
             throw new Exception("The aggregator does not contain a content type called: " + dataType);
         }
-        */
 
-
+         */
         // dummy return
+        if (dataType.equals("responses")) {
+            return new TypeToken<List<APIClass>>(){}.getType();
+        }
         return new TypeToken<List<Object>>(){}.getType();
     }
-
 }
