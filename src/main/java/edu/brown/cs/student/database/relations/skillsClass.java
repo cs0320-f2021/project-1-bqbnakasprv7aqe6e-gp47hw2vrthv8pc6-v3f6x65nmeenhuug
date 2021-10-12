@@ -28,6 +28,8 @@ public class skillsClass extends DBRelation {
         this.id = id;
     }
 
+    // possible name conflict with the variable names: names is not the actual name of the relation column, but name
+    // seems to conflict with skillsClass.name
     @RelationAttributeGetter(
             name = "names"
     )

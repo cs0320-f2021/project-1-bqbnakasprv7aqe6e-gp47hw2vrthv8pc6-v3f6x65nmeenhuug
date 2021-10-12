@@ -13,7 +13,7 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
-import edu.brown.cs.student.database.relations.interestsClass;
+import edu.brown.cs.student.database.relations.*;
 
 import freemarker.template.Configuration;
 import joptsimple.OptionParser;
@@ -29,7 +29,6 @@ import spark.template.freemarker.FreeMarkerEngine;
 import java.util.ArrayList;
 import java.util.List;
 import edu.brown.cs.student.database.Database;
-import edu.brown.cs.student.database.relations.User;
 import edu.brown.cs.student.ds.KVPair;
 import edu.brown.cs.student.ds.tree.KDTree;
 
@@ -133,7 +132,10 @@ public final class Main {
              for params we want proximity in? 
           */
           try {
-            database.rawQuery("SELECT * FROM interests", interestsClass.class);
+            List<interestsClass> interests = database.rawQuery("SELECT * FROM interests", interestsClass.class);
+            List<negativeClass> negatives = database.rawQuery("SELECT * FROM negatives", negativeClass.class);
+            List<positiveClass> positives = database.rawQuery("SELECT * FROM positives", positiveClass.class);
+            List<skillsClass> skills = database.rawQuery("SELECT * FROM skills", skillsClass.class);
           } catch (Exception e) {
             e.printStackTrace();
           }

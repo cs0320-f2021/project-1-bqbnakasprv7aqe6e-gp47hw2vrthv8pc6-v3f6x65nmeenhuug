@@ -1,5 +1,7 @@
 package edu.brown.cs.student.recommender;
 
+import edu.brown.cs.student.database.RelationAttributeGetter;
+
 public class APIClass {
     private int id;
     private String name;
