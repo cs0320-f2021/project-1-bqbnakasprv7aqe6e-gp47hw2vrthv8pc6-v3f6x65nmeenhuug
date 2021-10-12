@@ -1,4 +1,4 @@
-package edu.brown.cs.student.recommender;
+package edu.brown.cs.student.database.relations;
 
 import edu.brown.cs.student.database.DBRelation;
 import edu.brown.cs.student.database.RelationAttributeGetter;

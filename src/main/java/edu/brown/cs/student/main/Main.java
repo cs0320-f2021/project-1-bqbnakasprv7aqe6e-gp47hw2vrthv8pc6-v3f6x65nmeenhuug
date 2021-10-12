@@ -13,9 +13,7 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
-import edu.brown.cs.student.recommender.APIClass;
-import edu.brown.cs.student.recommender.interestsClass;
-import org.eclipse.jetty.io.ssl.SslClientConnectionFactory;
+import edu.brown.cs.student.database.relations.interestsClass;
 
 import freemarker.template.Configuration;
 import joptsimple.OptionParser;
@@ -32,10 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import edu.brown.cs.student.database.Database;
 import edu.brown.cs.student.database.relations.User;
-import edu.brown.cs.student.database.DBRelation;
 import edu.brown.cs.student.ds.KVPair;
 import edu.brown.cs.student.ds.tree.KDTree;
-import edu.brown.cs.student.recommender.APIClass;
 
 /**
  * The Main class of our project. This is where execution begins.
