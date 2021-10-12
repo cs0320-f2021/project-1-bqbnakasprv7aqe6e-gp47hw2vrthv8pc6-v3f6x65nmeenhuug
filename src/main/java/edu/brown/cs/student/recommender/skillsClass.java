@@ -31,14 +31,14 @@ public class skillsClass extends DBRelation {
     @RelationAttributeGetter(
             name = "names"
     )
-    public String getName() {
+    public String getNames() {
         return names;
     }
 
     @RelationAttributeSetter(
             name = "names"
     )
-    public void setName(String names) {
+    public void setNames(String names) {
         this.names = names;
     }
 
