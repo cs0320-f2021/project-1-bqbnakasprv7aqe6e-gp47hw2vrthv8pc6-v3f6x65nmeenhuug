@@ -13,8 +13,10 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
+import edu.brown.cs.student.bloomfilter.BloomFilterRecommender;
 import edu.brown.cs.student.database.relations.*;
 
+import edu.brown.cs.student.recommender.GroupRecommender;
 import freemarker.template.Configuration;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -93,6 +95,7 @@ public final class Main {
       MathBot mathbot = new MathBot();
 
       ApiAggregator apiAggregator = new ApiAggregator();
+      GroupRecommender recommender = new GroupRecommender();
 
       // Add commands to CommandHandler
       commandHandler.addCommand("database", (args) -> {
@@ -154,6 +157,11 @@ public final class Main {
               // populate map
               // populate list
             }
+
+            // NOTE: placeholder false positive rate -- FILL IN
+            BloomFilterRecommender bloomFilterRecommender = new BloomFilterRecommender(discreteTraitsMap, 0);
+
+            recommender.setBloomFilterRecommender(bloomFilterRecommender);
           } catch (Exception e) {
             e.printStackTrace();
             Error.badInputError();
