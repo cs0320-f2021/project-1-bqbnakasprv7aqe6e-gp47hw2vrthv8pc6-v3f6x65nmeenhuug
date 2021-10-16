@@ -13,11 +13,23 @@ public class Student implements Item {
 	private String name;
 	private Set<String> traits; 
 	private List<KVPair<String, Double>> skills; 
+	private Boolean prefersMarginalizedGroup; 
+	private Set<String> marginalizedGroups;
 
-	public Student(String id, Set<String> traits, List<KVPair<String, Double>> skills) {
-		this.id = id; 
-		this.traits = traits; 
-		this.skills = skills; 
+	public Student(String id) {
+		this.id = id;
+	}
+
+	public void addSkill(KVPair<String, Double> skill) {
+		skills.add(skill);
+	}
+
+	public Boolean getPrefersMarginalizedGroup() {
+		return prefersMarginalizedGroup;
+	}
+
+	public void setPrefersMarginalizedGroup(Boolean prefersMarginalizedGroup) {
+		this.prefersMarginalizedGroup = prefersMarginalizedGroup;
 	}
 
 	public String getName() {
@@ -28,19 +40,21 @@ public class Student implements Item {
 		this.name = name;
 	}
 
-	/**
-	 * Empty constructor
-	 */
-	public Student(String id) {
-
-	}
-
 	public String getId() {
 		return this.id;
 	}
 
 	public List<String> getVectorRepresentation() {
-		return new ArrayList<String>(traits);
+		if (this.prefersMarginalizedGroup) {
+			// Combine in a set to avoid duplicates
+			Set<String> combinedTraits = new HashSet<String>();
+			combinedTraits.addAll(this.traits);
+			combinedTraits.addAll(this.marginalizedGroups);
+
+			return new ArrayList<String>(combinedTraits);
+		} else {
+			return new ArrayList<String>(traits);
+		}
 	}
 
 	public void addTrait(String trait) {

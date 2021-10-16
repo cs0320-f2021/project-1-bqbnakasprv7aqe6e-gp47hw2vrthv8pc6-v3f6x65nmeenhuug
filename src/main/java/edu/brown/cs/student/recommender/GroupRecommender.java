@@ -61,7 +61,8 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
       skills.add(new KVPair<String, Double>("teamwork", (double) studentSkills.getTeamwork()));
       skills.add(new KVPair<String, Double>("frontend", (double) studentSkills.getFrontend()));
 
-      Student student = new Student(String.valueOf(studentSkills.getId()), new HashSet<String>(), skills);
+      Student student = new Student(String.valueOf(studentSkills.getId()));
+      student.setSkills(skills);
       studentMap.put(student.getId(), student);
     }
     
@@ -71,7 +72,20 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
       student.addTrait(studentTraits.getPositiveTrait());
       student.addTrait(studentTraits.getNegativeTrait());
     }
-      
+    // TODO 
+    // After API result has been obtained, for each student in the result:
+    // - obtain their id
+    // - get the corresponding Student object from studentMap
+    // - add the following traits to that studentObject's traits set (i.e., call
+    //   student.addTrait() on the following): 
+    //   - meeting 
+    //   - grade 
+    //   - meeting_times 
+    //   - preferred_language
+    // - call student.addSkill(years_of_experience), cast grade to a double
+    //   (i.e. freshman = 1, soph. = 2) and call student.addSkill(casted_grade)
+    //   
+    
   }
    
 }
