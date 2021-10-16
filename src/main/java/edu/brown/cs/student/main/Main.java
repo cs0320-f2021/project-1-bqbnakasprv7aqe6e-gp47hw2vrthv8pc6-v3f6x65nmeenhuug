@@ -18,6 +18,7 @@ import edu.brown.cs.student.database.relations.*;
 
 import edu.brown.cs.student.recommender.GroupRecommender;
 import freemarker.template.Configuration;
+import jdk.internal.module.SystemModuleFinders;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import spark.ExceptionHandler;
@@ -33,6 +34,7 @@ import java.util.List;
 import edu.brown.cs.student.database.Database;
 import edu.brown.cs.student.ds.KVPair;
 import edu.brown.cs.student.ds.tree.KDTree;
+import edu.brown.cs.student.main.exceptions.NoSuchCommandException;
 
 /**
  * The Main class of our project. This is where execution begins.
@@ -89,7 +91,7 @@ public final class Main {
       List<String[]> starData = new ArrayList<String[]>();
       List<KVPair<User, double[]>> userData = new ArrayList<KVPair<User, double[]>>();
       CSVParser csvparser = new CSVParser();
-      Database database = new Database(); 
+      // Database database = new Database(); 
       
       CommandHandler commandHandler = new CommandHandler();
       MathBot mathbot = new MathBot();
@@ -100,7 +102,7 @@ public final class Main {
       // Add commands to CommandHandler
       commandHandler.addCommand("database", (args) -> {
         try {
-          database.connect(args[0]);
+          recommender.connect(args[0]);
         } catch (ClassNotFoundException e) {
           System.out.println("An unexpected error has occurred: could not find org.sqlite.JDBC");
         } catch (SQLException e) {
@@ -110,35 +112,9 @@ public final class Main {
 
       commandHandler.addCommand("recsys_load", (args) -> {
         if (args[0].equals("responses")) {
-          /*
-          TODO 
-          1. Load API data using API aggregator with StudentFormResponse type
-          2. Convert this API data to a HashMap with the ID as the value 
-          3. Obtain users from SQL database's skills relation,
-          4. For each of the above users perform a query on that user ID on 
-             each relation (positive, negative, interests), store those in 
-             some User object.
-          5. Create hashmap of above results with ID as value
-          6. Use Java builtin HashMap.merge() to combine the two HashMaps
-          7. Encode data: 
-            - `positive`: bag of words model (want variation)
-            - `negative`: inverted bag of words model (1 if not present, 0 if
-              present) (want variation) 
-            - availability: bag of words (want similarity)
-            - meeting: bag of words (want similarity)
-            - grade: (want variation)
-            - years of experience: use numerical value (want variation)
-            - preferred language (optional): bag of words (want variation)
-            - marginalized group (optional): bag of words (want variation)
-            - prefer group (optional): 1 or 0?
-          8. Use bloomfilter for parameters we want variation in and kdtree 
-             for params we want proximity in? 
-          */
           try {
-            List<interestsClass> interests = database.rawQuery("SELECT * FROM interests", interestsClass.class);
-            List<negativeClass> negatives = database.rawQuery("SELECT * FROM negatives", negativeClass.class);
-            List<positiveClass> positives = database.rawQuery("SELECT * FROM positives", positiveClass.class);
-            List<skillsClass> skills = database.rawQuery("SELECT * FROM skills", skillsClass.class);
+            // More efficient to join these traits on query 
+            recommender.loadDBData();
           } catch (Exception e) {
             e.printStackTrace();
           }
@@ -152,7 +128,7 @@ public final class Main {
             List<Object> continuousTraitsList = new ArrayList();
 
             List<User> userList = database.rawQuery("SELECT * FROM users", User.class);
-
+            
             for (User user : userList) {
               // populate map
               // populate list
@@ -166,6 +142,8 @@ public final class Main {
             e.printStackTrace();
             Error.badInputError();
           }
+        } else {
+          System.out.println("ERROR: No such recsys_load command: " + args[1]);
         }
       });
 

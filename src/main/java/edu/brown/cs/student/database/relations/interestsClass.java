@@ -4,7 +4,7 @@ import edu.brown.cs.student.database.DBRelation;
 import edu.brown.cs.student.database.RelationAttributeGetter;
 import edu.brown.cs.student.database.RelationAttributeSetter;
 
-public class interestsClass<T> extends DBRelation {
+public class interestsClass extends DBRelation {
     int id;
     String interest;
 
@@ -29,28 +29,28 @@ public class interestsClass<T> extends DBRelation {
     }
 
     @RelationAttributeGetter(
-            name = "id"
+        name = "id"
     )
     public int getId() {
         return id;
     }
 
     @RelationAttributeSetter(
-            name = "id"
+        name = "id"
     )
     public void setId(int id) {
         this.id = id;
     }
 
     @RelationAttributeGetter(
-            name = "interest"
+        name = "interest"
     )
     public String getInterest() {
         return interest;
     }
 
     @RelationAttributeSetter(
-            name = "interest"
+        name = "interest"
     )
     public void setInterest(String interest) {
         this.interest = interest;

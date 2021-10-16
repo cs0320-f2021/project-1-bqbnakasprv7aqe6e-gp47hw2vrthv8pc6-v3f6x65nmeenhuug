@@ -5,54 +5,54 @@ import edu.brown.cs.student.database.RelationAttributeGetter;
 import edu.brown.cs.student.database.RelationAttributeSetter;
 
 public class positiveClass extends DBRelation {
-    int id;
-    String trait;
+  int id;
+  String trait;
 
-    @RelationAttributeGetter(
-            name = "id"
-    )
-    public int getId() {
-        return id;
-    }
+  @RelationAttributeGetter(
+    name = "id"
+  )
+  public int getId() {
+    return id;
+  }
 
-    @RelationAttributeSetter(
-            name = "id"
-    )
-    public void setId(int id) {
-        this.id = id;
-    }
+  @RelationAttributeSetter(
+    name = "id"
+  )
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    @RelationAttributeGetter(
-            name = "trait"
-    )
-    public String getTrait() {
-        return trait;
-    }
+  @RelationAttributeGetter(
+    name = "trait"
+  )
+  public String getTrait() {
+    return trait;
+  }
 
-    @RelationAttributeSetter(
-            name = "trait"
-    )
-    public void setTrait(String trait) {
-        this.trait = trait;
-    }
+  @RelationAttributeSetter(
+    name = "trait"
+  )
+  public void setTrait(String trait) {
+    this.trait = trait;
+  }
 
-    @Override
-    public String getPrimaryKeyAttribute() {
-        return "id";
-    }
+  @Override
+  public String getPrimaryKeyAttribute() {
+    return "id";
+  }
 
-    @Override
-    public Object getPrimaryKeyValue() {
-        return this.id;
-    }
+  @Override
+  public Object getPrimaryKeyValue() {
+    return this.id;
+  }
 
-    @Override
-    public String getRelationName() {
-        return positiveClass.name;
-    }
+  @Override
+  public String getRelationName() {
+    return positiveClass.name;
+  }
 
-    @Override
-    protected String relationName() {
-        return "positive";
-    }
+  @Override
+  protected String relationName() {
+    return "positive";
+  }
 }
