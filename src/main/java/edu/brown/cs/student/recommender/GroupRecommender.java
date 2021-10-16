@@ -18,7 +18,6 @@ import java.util.List;
 public class GroupRecommender<T extends Item> implements Recommender<T> {
   private Database database = new Database(); 
   private HashMap<String, Student> studentMap;
-  private BloomFilterRecommender<T> bloomFilterRecommender;
 
   /**
    * Default constructor
@@ -28,11 +27,15 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
   }
 
   public List<T> getTopKRecommendations(T item, int k) {
+    // TODO 
+    Double falsePositivityRate = 0.0;
+    BloomFilterRecommender bf = new BloomFilterRecommender<Student>(studentMap, falsePositivityRate);
     // TODO
     // get recommendations from kd tree and bloom filter recommenders
     // combine
     return null;
   }
+
 
   public void setBloomFilterRecommender(BloomFilterRecommender<T> bloomFilterRecommender) {
     this.bloomFilterRecommender = bloomFilterRecommender;
@@ -46,7 +49,7 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
     database.connect(path);
   }
 
-  public void loadDBData() throws SQLException, BadRelationException {
+  public void loadData() throws SQLException, BadRelationException {
     List<StudentTraits> traits = database.rawQuery(
         "SELECT i.id AS id, interest, p.trait AS positiveTrait, n.trait AS negativeTrait"
       + "FROM interests AS i JOIN negative AS n ON i.id = n.id JOIN positive AS p on i.id = p.id", 

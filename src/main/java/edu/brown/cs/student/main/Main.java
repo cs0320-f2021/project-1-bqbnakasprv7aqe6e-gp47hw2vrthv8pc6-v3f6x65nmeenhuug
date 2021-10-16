@@ -114,34 +114,38 @@ public final class Main {
         if (args[0].equals("responses")) {
           try {
             // More efficient to join these traits on query 
-            recommender.loadDBData();
+            recommender.loadData();
           } catch (Exception e) {
             e.printStackTrace();
           }
-          try {
-            List<Object> apiData = apiAggregator.getData("APIClass");
-            System.out.println(apiData);
+          // NOTE: Implemented student class for better integration with 
+          // bloom field recommender api, see GroupRecommender.getTopKRecommendations
+          // for the equivalent of the below calls.
+
+          // try {
+          //   List<Object> apiData = apiAggregator.getData("APIClass");
+          //   System.out.println(apiData);
 
 
-            // not sure about value type here
-            HashMap<Integer, Object> discreteTraitsMap = new HashMap();
-            List<Object> continuousTraitsList = new ArrayList();
+          //   // not sure about value type here
+          //   HashMap<Integer, Object> discreteTraitsMap = new HashMap();
+          //   List<Object> continuousTraitsList = new ArrayList();
 
-            List<User> userList = database.rawQuery("SELECT * FROM users", User.class);
+          //   List<User> userList = database.rawQuery("SELECT * FROM users", User.class);
             
-            for (User user : userList) {
-              // populate map
-              // populate list
-            }
+          //   for (User user : userList) {
+          //     // populate map
+          //     // populate list
+          //   }
 
-            // NOTE: placeholder false positive rate -- FILL IN
-            BloomFilterRecommender bloomFilterRecommender = new BloomFilterRecommender(discreteTraitsMap, 0);
+          //   // NOTE: placeholder false positive rate -- FILL IN
+          //   BloomFilterRecommender bloomFilterRecommender = new BloomFilterRecommender(discreteTraitsMap, 0);
 
-            recommender.setBloomFilterRecommender(bloomFilterRecommender);
-          } catch (Exception e) {
-            e.printStackTrace();
-            Error.badInputError();
-          }
+          //   recommender.setBloomFilterRecommender(bloomFilterRecommender);
+          // } catch (Exception e) {
+          //   e.printStackTrace();
+          //   Error.badInputError();
+          // }
         } else {
           System.out.println("ERROR: No such recsys_load command: " + args[1]);
         }
