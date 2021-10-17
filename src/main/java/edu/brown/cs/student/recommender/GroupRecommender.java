@@ -11,6 +11,7 @@ import edu.brown.cs.student.main.ApiAggregator;
 import java.lang.reflect.Type;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +28,13 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
    */
   public GroupRecommender(){}
 
+  // unsure if this should be handled another way -- must be able to access Student from Main
+  // to call getTopKRecommendations
+  public Student getStudent(int id) {
+    return studentMap.get(id);
+  }
+
+
   public List<T> getTopKRecommendations(T item, int k) {
     // TODO 
     Double falsePositivityRate = 0.0;
@@ -42,6 +50,11 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
 //    this.bloomFilterRecommender = bloomFilterRecommender;
 //  }
 
+  public List<Collection<T>> getOptimalGroups(int teamSize) {
+    // TODO
+    // generate groups
+    return null;
+  }
 
   /**
    * Connect the instance's database object to the given database. 

@@ -17,6 +17,7 @@ import edu.brown.cs.student.bloomfilter.BloomFilterRecommender;
 import edu.brown.cs.student.database.relations.*;
 
 import edu.brown.cs.student.recommender.GroupRecommender;
+import edu.brown.cs.student.recommender.Student;
 import freemarker.template.Configuration;
 //import jdk.internal.module.SystemModuleFinders;
 import joptsimple.OptionParser;
@@ -155,8 +156,10 @@ public final class Main {
         if (args.length == 2) {
           int numRecs = Integer.parseInt(args[0]);
           int id = Integer.parseInt(args[1]);
-          
+          Student student = recommender.getStudent(id);
+
           // get student matches in preference order
+          recommender.getTopKRecommendations(student, numRecs);
         } else { // Should do actual error instead?
           System.out.println("ERROR: recsys_rec requires the desired number of " +
               "recommendations and the student id provided as arguments in the form: " +
@@ -169,6 +172,7 @@ public final class Main {
           int teamSize = Integer.parseInt(args[0]);
 
           // get optimal groups
+          recommender.getOptimalGroups(teamSize);
         } else { // Should do actual error instead?
           System.out.println("ERROR: recsys_gen_groups requires the desired team size to be provided " +
               "as an argument as follows: recsys_gen_groups <team_size>");
