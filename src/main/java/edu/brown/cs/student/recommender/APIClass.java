@@ -26,6 +26,23 @@ public class APIClass {
         return this.grade;
     }
 
+    public double getCastedGrade() {
+        switch (this.grade) {
+            case "Freshman":
+                return 1.0;
+            case "Sophomore":
+                return 2.0;
+            case "Junior":
+                return 3.0;
+            case "Senior":
+                return 4.0;
+            case "Grad":
+                return 5.0; // this is an assumption
+            default:
+                return -1.0;
+        }
+    }
+
     public String getMeeting() {
         return this.meeting;
     }

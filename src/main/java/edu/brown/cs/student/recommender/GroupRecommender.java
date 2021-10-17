@@ -50,23 +50,6 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
     database.connect(path);
   }
 
-  private double casted_grade(String gradeLevel) {
-    switch (gradeLevel) {
-      case "Freshman":
-        return 1.0;
-      case "Sophomore":
-        return 2.0;
-      case "Junior":
-        return 3.0;
-      case "Senior":
-        return 4.0;
-      case "Grad":
-        return 5.0; // this is an assumption
-      default:
-        return -1.0;
-    }
-  }
-
   public void loadData() throws Exception {
 //    List<StudentTraits> traits = database.rawQuery(
 //        "SELECT i.id AS id, i.interest AS interest, p.trait AS positiveTrait, n.trait AS negativeTrait"
@@ -134,8 +117,8 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
 
       student.addSkill(new KVPair<String, Double>("years_of_experience",
           (double) datum.getYears_of_experience()));
-      if (casted_grade(datum.getGrade()) > 0) {
-        student.addSkill(new KVPair<String, Double>("grade_level", casted_grade(datum.getGrade())));
+      if (datum.getCastedGrade() > 0) {
+        student.addSkill(new KVPair<String, Double>("grade_level", datum.getCastedGrade()));
       }
     }
   }
