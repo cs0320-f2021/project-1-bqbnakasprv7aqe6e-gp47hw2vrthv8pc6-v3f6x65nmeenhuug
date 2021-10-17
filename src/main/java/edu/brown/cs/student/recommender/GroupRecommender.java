@@ -48,37 +48,49 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
    */
   public void connect(String path) throws SQLException, ClassNotFoundException {
     database.connect(path);
+//    database.addRelation(interestsClass.class);
+//    database.addRelation(negativeClass.class);
+//    database.addRelation(positiveClass.class);
+//    database.addRelation(skillsClass.class);
+//    database.addRelation(StudentTraits.class);
+//    database.addRelation(StudentSkills.class);
+//    System.out.println(database.getRelations());
   }
 
   public void loadData() throws Exception {
-//    List<StudentTraits> traits = database.rawQuery(
-//        "SELECT i.id AS id, i.interest AS interest, p.trait AS positiveTrait, n.trait AS negativeTrait"
-//      + "FROM interests AS i JOIN negative AS n ON i.id = n.id JOIN positive AS p ON i.id = p.id",
-//      StudentTraits.class);
-//    List<StudentSkills> skillsQueryResult = database.rawQuery("SELECT * FROM skills", StudentSkills.class);
-//
-//    for (StudentSkills studentSkills : skillsQueryResult) {
-//      System.out.println(studentSkills);
-//      List<KVPair<String, Double>> skills = new ArrayList<KVPair<String, Double>>();
-//
-//      skills.add(new KVPair<String, Double>("commenting", (double) studentSkills.getCommenting()));
-//      skills.add(new KVPair<String, Double>("testing", (double) studentSkills.getTesting()));
-//      skills.add(new KVPair<String, Double>("oop", (double) studentSkills.getOop()));
-//      skills.add(new KVPair<String, Double>("algorithms", (double) studentSkills.getAlgorithms()));
-//      skills.add(new KVPair<String, Double>("teamwork", (double) studentSkills.getTeamwork()));
-//      skills.add(new KVPair<String, Double>("frontend", (double) studentSkills.getFrontend()));
-//
-//      Student student = new Student(String.valueOf(studentSkills.getId()));
-//      student.setSkills(skills);
-//      studentMap.put(student.getId(), student);
-//    }
-//
-//    for (StudentTraits studentTraits : traits) {
-//      Student student = studentMap.get(String.valueOf(studentTraits.getId()));
-//      student.addTrait(studentTraits.getInterest());
-//      student.addTrait(studentTraits.getPositiveTrait());
-//      student.addTrait(studentTraits.getNegativeTrait());
-//    }
+    List<StudentTraits> traits = database.rawQuery(
+        "SELECT i.id AS id, i.interest AS interest, p.trait AS positiveTrait, n.trait AS negativeTrait"
+      + "FROM interests AS i JOIN negative AS n ON i.id = n.id JOIN positive AS p ON i.id = p.id",
+      StudentTraits.class);
+
+//    System.out.println(database.getRelations());
+
+    List<StudentSkills> skillsQueryResult = database.rawQuery("SELECT * FROM skills", StudentSkills.class);
+//    List<skillsClass> skillsQueryResult = database.rawQuery("SELECT * FROM skills", skillsClass.class);
+
+
+    for (StudentSkills studentSkills : skillsQueryResult) {
+      System.out.println(studentSkills);
+      List<KVPair<String, Double>> skills = new ArrayList<KVPair<String, Double>>();
+
+      skills.add(new KVPair<String, Double>("commenting", (double) studentSkills.getCommenting()));
+      skills.add(new KVPair<String, Double>("testing", (double) studentSkills.getTesting()));
+      skills.add(new KVPair<String, Double>("oop", (double) studentSkills.getOop()));
+      skills.add(new KVPair<String, Double>("algorithms", (double) studentSkills.getAlgorithms()));
+      skills.add(new KVPair<String, Double>("teamwork", (double) studentSkills.getTeamwork()));
+      skills.add(new KVPair<String, Double>("frontend", (double) studentSkills.getFrontend()));
+
+      Student student = new Student(String.valueOf(studentSkills.getId()));
+      student.setSkills(skills);
+      studentMap.put(student.getId(), student);
+    }
+
+    for (StudentTraits studentTraits : traits) {
+      Student student = studentMap.get(String.valueOf(studentTraits.getId()));
+      student.addTrait(studentTraits.getInterest());
+      student.addTrait(studentTraits.getPositiveTrait());
+      student.addTrait(studentTraits.getNegativeTrait());
+    }
     // TODO 
     // After API result has been obtained, for each student in the result:
     // - obtain their id
@@ -117,7 +129,7 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
 
       student.addSkill(new KVPair<String, Double>("years_of_experience",
           (double) datum.getYears_of_experience()));
-      if (datum.getCastedGrade() > 0) {
+      if (datum.getCastedGrade() > 0.0) {
         student.addSkill(new KVPair<String, Double>("grade_level", datum.getCastedGrade()));
       }
     }

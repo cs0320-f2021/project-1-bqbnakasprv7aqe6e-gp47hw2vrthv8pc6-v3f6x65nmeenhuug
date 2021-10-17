@@ -36,9 +36,7 @@ public class Database {
   /**
    * Default constructor.
    */
-  public Database() {
-
-  }
+  public Database() {}
   
   /** 
    * Clear this instance's relations and resets the SQL connection. 
@@ -53,6 +51,11 @@ public class Database {
    */
   public void clearRelations() { 
     relations.clear(); 
+  }
+
+  // delete me
+  public HashMap<String, Class<? extends DBRelation>> getRelations() {
+    return this.relations;
   }
 
   /**

@@ -151,6 +151,30 @@ public final class Main {
         }
       });
 
+      commandHandler.addCommand("recsys_rec", (args) -> {
+        if (args.length == 2) {
+          int numRecs = Integer.parseInt(args[0]);
+          int id = Integer.parseInt(args[1]);
+          
+          // get student matches in preference order
+        } else { // Should do actual error instead?
+          System.out.println("ERROR: recsys_rec requires the desired number of " +
+              "recommendations and the student id provided as arguments in the form: " +
+              "recsys_rec <num_recs> <student_id>");
+        }
+      });
+
+      commandHandler.addCommand("recsys_gen_groups", (args) -> {
+        if (args.length == 1) {
+          int teamSize = Integer.parseInt(args[0]);
+
+          // get optimal groups
+        } else { // Should do actual error instead?
+          System.out.println("ERROR: recsys_gen_groups requires the desired team size to be provided " +
+              "as an argument as follows: recsys_gen_groups <team_size>");
+        }
+      });
+
       commandHandler.addCommand("add", (args) -> {
         double result = mathbot.add(Double.parseDouble(args[0]), Double.parseDouble(args[1]));
         System.out.println(result);
