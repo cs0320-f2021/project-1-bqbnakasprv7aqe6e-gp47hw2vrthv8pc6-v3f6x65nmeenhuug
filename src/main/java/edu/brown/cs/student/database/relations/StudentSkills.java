@@ -47,6 +47,7 @@ public class StudentSkills extends DBRelation{
     public void setID(int id) {
         this.id = id;
     }
+
     @RelationAttributeGetter(
         name = "frontend"
     )
@@ -144,6 +145,5 @@ public class StudentSkills extends DBRelation{
     public void setStudentName(String studentName) {
         this.studentName = studentName;
     }
-        
-        
+
 }

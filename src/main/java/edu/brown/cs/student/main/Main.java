@@ -18,7 +18,7 @@ import edu.brown.cs.student.database.relations.*;
 
 import edu.brown.cs.student.recommender.GroupRecommender;
 import freemarker.template.Configuration;
-import jdk.internal.module.SystemModuleFinders;
+//import jdk.internal.module.SystemModuleFinders;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import spark.ExceptionHandler;
@@ -91,7 +91,7 @@ public final class Main {
       List<String[]> starData = new ArrayList<String[]>();
       List<KVPair<User, double[]>> userData = new ArrayList<KVPair<User, double[]>>();
       CSVParser csvparser = new CSVParser();
-      // Database database = new Database(); 
+      Database database = new Database();
       
       CommandHandler commandHandler = new CommandHandler();
       MathBot mathbot = new MathBot();
@@ -103,6 +103,7 @@ public final class Main {
       commandHandler.addCommand("database", (args) -> {
         try {
           recommender.connect(args[0]);
+          System.out.println("Loaded database from " + args[0]);
         } catch (ClassNotFoundException e) {
           System.out.println("An unexpected error has occurred: could not find org.sqlite.JDBC");
         } catch (SQLException e) {
@@ -112,7 +113,7 @@ public final class Main {
 
       commandHandler.addCommand("recsys_load", (args) -> {
         if (args[0].equals("responses")) {
-          try {
+        try {
             // More efficient to join these traits on query 
             recommender.loadData();
           } catch (Exception e) {
@@ -123,8 +124,7 @@ public final class Main {
           // for the equivalent of the below calls.
 
           // try {
-          //   List<Object> apiData = apiAggregator.getData("APIClass");
-          //   System.out.println(apiData);
+//          List<Object> apiData = apiAggregator.getData("APIClass");
 
 
           //   // not sure about value type here
