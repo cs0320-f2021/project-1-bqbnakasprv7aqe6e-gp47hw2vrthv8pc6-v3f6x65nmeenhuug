@@ -98,7 +98,7 @@ public class GroupRecommender implements Recommender<Student> {
 
 
     for (StudentSkills studentSkills : skillsQueryResult) {
-      System.out.println(studentSkills);
+//      System.out.println(studentSkills);
       List<KVPair<String, Double>> skills = new ArrayList<KVPair<String, Double>>();
 
       skills.add(new KVPair<String, Double>("commenting", (double) studentSkills.getCommenting()));
@@ -109,46 +109,54 @@ public class GroupRecommender implements Recommender<Student> {
       skills.add(new KVPair<String, Double>("frontend", (double) studentSkills.getFrontend()));
 
       Student student = new Student(String.valueOf(studentSkills.getId()));
-      System.out.println(student);
-      System.out.println(student.getId());
+//      System.out.println(student);
+//      System.out.println(student.getId());
       student.setSkills(skills);
       studentMap.put(student.getId(), student);
     }
 
-    ArrayList<KVPair<String, double[]>> collection = new ArrayList(studentMap.size());
-    System.out.print("collection size:");
-    System.out.print(collection.size());
+    ArrayList<KVPair<String, double[]>> collection = new ArrayList();
 
 //    for (String id : studentMap.keySet()) {
 //      Student student = id.
 //    }
-    for (Map.Entry<String, Student> student : studentMap.entrySet()) {
-      Student value = student.getValue();
-      System.out.println("student: ");
-      System.out.println(value);
-      List<KVPair<String, Double>> skills = value.getSkills();
+    for (Map.Entry<String, Student> studentEntry : studentMap.entrySet()) {
+      Student student = studentEntry.getValue();
+//      System.out.println("student: ");
+//      System.out.println(value);
+      List<KVPair<String, Double>> skills = student.getSkills();
       double[] collectionBuilder = new double[skills.size()];
       for (int i = 0; i < skills.size(); i++) {
         collectionBuilder[i] = skills.get(i).getValue();
       }
-      collection.add(new KVPair(student.getKey(), collectionBuilder));
+//      System.out.println("cb 0:");
+//      System.out.println(collectionBuilder[0]);
+//      System.out.println("cb l:");
+//      System.out.println(collectionBuilder[skills.size() - 1]);
+      collection.add(new KVPair(studentEntry.getKey(), collectionBuilder));
       }
 
+    System.out.println("c0:");
+    System.out.println(collection.get(0).getKey());
     KDTree<String> tree = new KDTree(collection);
-    for (Map.Entry<String, Student> student : studentMap.entrySet()) {
-      Student value = student.getValue();
-      List<KVPair<String, Double>> skills = value.getSkills();
+
+    for (Map.Entry<String, Student> studentEntry : studentMap.entrySet()) {
+      Student student = studentEntry.getValue();
+//      System.out.println("student id:");
+//      System.out.println(student.getId());
+      List<KVPair<String, Double>> skills = student.getSkills();
       double[] invertedSkill = new double[skills.size()];
       for (int i = 0; i < skills.size(); i++) {
+//        System.out.println("skills " + i);
+//        System.out.println(skills.get(i).getValue());
         double inverted = Math.abs(skills.get(i).getValue() - 10.0);
         invertedSkill[i] = inverted;
       }
-      System.out.println(invertedSkill[0]);
+//      System.out.println(invertedSkill[0]);
       // Change number of recommendations to get from KDTree here
       int recs = 10;
-      recommendationMap.put(student.getKey(), tree.kNearestNeighbors(invertedSkill, recs));
+      recommendationMap.put(studentEntry.getKey(), tree.kNearestNeighbors(invertedSkill, recs));
     }
-
 
     for (StudentTraits studentTraits : traits) {
       Student student = studentMap.get(String.valueOf(studentTraits.getId()));
@@ -179,7 +187,8 @@ public class GroupRecommender implements Recommender<Student> {
       e.printStackTrace();
     }
 
-    System.out.println(apiData);
+//    System.out.println("apiData: ");
+//    System.out.println(apiData);
 
     for (Object apiDatum : apiData) {
       // Is it okay to cast here?
@@ -187,9 +196,9 @@ public class GroupRecommender implements Recommender<Student> {
       int id = datum.getId();
       Student student = studentMap.get(String.valueOf(id));
 
-      System.out.println(datum);
-      System.out.println(id);
-      System.out.println(student);
+//      System.out.println(datum);
+//      System.out.println(id);
+//      System.out.println(student);
 
       student.addTrait(datum.getMeeting());
       student.addTrait(datum.getGrade());
