@@ -1,10 +1,6 @@
 package edu.brown.cs.student.recommender;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import edu.brown.cs.student.ds.KVPair;
 
@@ -18,6 +14,10 @@ public class Student implements Item {
 
 	public Student(String id) {
 		this.id = id;
+	}
+
+	public List<KVPair<String,Double>> getSkills() {
+		return this.skills;
 	}
 
 	public void addSkill(KVPair<String, Double> skill) {

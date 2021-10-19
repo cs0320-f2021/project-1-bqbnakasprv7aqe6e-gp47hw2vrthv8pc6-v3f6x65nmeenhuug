@@ -1,20 +1,14 @@
 package edu.brown.cs.student.recommender;
 
-import com.google.gson.Gson;
 import edu.brown.cs.student.bloomfilter.BloomFilterRecommender;
 import edu.brown.cs.student.database.Database;
-import edu.brown.cs.student.database.exceptions.BadRelationException;
 import edu.brown.cs.student.database.relations.*;
 import edu.brown.cs.student.ds.KVPair;
+import edu.brown.cs.student.ds.tree.KDTree;
 import edu.brown.cs.student.main.ApiAggregator;
 
-import java.lang.reflect.Type;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class for GroupRecommender.
@@ -22,6 +16,7 @@ import java.util.List;
 public class GroupRecommender<T extends Item> implements Recommender<T> {
   private Database database = new Database(); 
   private HashMap<String, Student> studentMap;
+  private HashMap<String, List<KVPair<String, double[]>>> recommendationMap;
 
   /**
    * Default constructor
@@ -99,6 +94,31 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
       studentMap.put(student.getId(), student);
     }
 
+    ArrayList<KVPair<String, double[]>> collection = new ArrayList(studentMap.size());
+
+    for (Map.Entry<String, Student> student : studentMap.entrySet()) {
+      Student value = student.getValue();
+      List<KVPair<String, Double>> skills = value.getSkills();
+      double[] collectionBuilder = new double[skills.size()];
+      for (int i = 0; i < skills.size(); i++) {
+        collectionBuilder[i] = skills.get(i).getValue();
+      }
+      collection.add(new KVPair(student.getKey(), collectionBuilder));
+      }
+
+    KDTree<String> tree = new KDTree(collection);
+    for (Map.Entry<String, Student> student : studentMap.entrySet()) {
+      Student value = student.getValue();
+      List<KVPair<String, Double>> skills = value.getSkills();
+      double[] invertedSkill = new double[skills.size()];
+      for (int i = 0; i < skills.size(); i++) {
+        double inverted = skills.get(i).getValue() - 10.0;
+        invertedSkill[i] = inverted;
+      }
+      recommendationMap.put(student.getKey(), tree.kNearestNeighbors(invertedSkill, 10));
+    }
+
+
     for (StudentTraits studentTraits : traits) {
       Student student = studentMap.get(String.valueOf(studentTraits.getId()));
       student.addTrait(studentTraits.getInterest());
@@ -148,5 +168,4 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
       }
     }
   }
-   
 }
