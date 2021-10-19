@@ -15,8 +15,9 @@ import java.util.*;
  */
 public class GroupRecommender<T extends Item> implements Recommender<T> {
   private Database database = new Database(); 
-  private HashMap<String, Student> studentMap;
-  private HashMap<String, List<KVPair<String, double[]>>> recommendationMap;
+  private HashMap<String, Student> studentMap = new HashMap<String, Student>();
+  private HashMap<String, List<KVPair<String, double[]>>> recommendationMap =
+      new HashMap<String, List<KVPair<String, double[]>>>();
 
   /**
    * Default constructor
@@ -104,6 +105,8 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
       skills.add(new KVPair<String, Double>("frontend", (double) studentSkills.getFrontend()));
 
       Student student = new Student(String.valueOf(studentSkills.getId()));
+      System.out.println(student);
+      System.out.println(student.getId());
       student.setSkills(skills);
       studentMap.put(student.getId(), student);
     }
@@ -126,9 +129,11 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
       List<KVPair<String, Double>> skills = value.getSkills();
       double[] invertedSkill = new double[skills.size()];
       for (int i = 0; i < skills.size(); i++) {
-        double inverted = skills.get(i).getValue() - 10.0;
+        double inverted = Math.abs(skills.get(i).getValue() - 10.0);
         invertedSkill[i] = inverted;
+        System.out.println(inverted);
       }
+      System.out.println(invertedSkill[0]);
       // Change number of recommendations to get from KDTree here
       int recs = 10;
       recommendationMap.put(student.getKey(), tree.kNearestNeighbors(invertedSkill, recs));
@@ -170,7 +175,11 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
       // Is it okay to cast here?
       APIClass datum = (APIClass) apiDatum;
       int id = datum.getId();
-      Student student = studentMap.get(id);
+      Student student = studentMap.get(String.valueOf(id));
+
+      System.out.println(datum);
+      System.out.println(id);
+      System.out.println(student);
 
       student.addTrait(datum.getMeeting());
       student.addTrait(datum.getGrade());
@@ -183,5 +192,9 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
         student.addSkill(new KVPair<String, Double>("grade_level", datum.getCastedGrade()));
       }
     }
+    System.out.println(recommendationMap.size());
+//    System.out.println(recommendationMap.keySet());
+    System.out.println(recommendationMap.get("1").size());
+//    System.out.println(recommendationMap.values());
   }
 }

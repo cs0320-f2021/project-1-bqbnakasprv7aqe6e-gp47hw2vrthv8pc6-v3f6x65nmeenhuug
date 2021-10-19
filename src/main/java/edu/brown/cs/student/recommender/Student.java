@@ -7,7 +7,7 @@ import edu.brown.cs.student.ds.KVPair;
 public class Student implements Item {
 	private String id; 
 	private String name;
-	private Set<String> traits; 
+	private Set<String> traits = new HashSet<>();
 	private List<KVPair<String, Double>> skills; 
 	private Boolean prefersMarginalizedGroup; 
 	private Set<String> marginalizedGroups;
