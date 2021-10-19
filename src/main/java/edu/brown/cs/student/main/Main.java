@@ -146,7 +146,7 @@ public final class Main {
           int teamSize = Integer.parseInt(args[0]);
 
           // get optimal groups
-          recommender.getOptimalGroups(teamSize);
+          System.out.println(recommender.getOptimalGroups(teamSize));
         } else { // Should do actual error instead?
           System.out.println("ERROR: recsys_gen_groups requires the desired team size to be provided " +
               "as an argument as follows: recsys_gen_groups <team_size>");

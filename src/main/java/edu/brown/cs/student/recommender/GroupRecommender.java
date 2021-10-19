@@ -102,35 +102,47 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
 
     HashMap<String, Student> studentMapCopy = (HashMap<String, Student>) studentMap.clone();
 
-    String[] studentMapCopyIds = (String[]) studentMapCopy.keySet().toArray();
+    String[] array = new String[0];
+    String[] studentMapCopyIds = studentMapCopy.keySet().toArray(array);
 
     List<List<Student>> optimalGroups = new ArrayList<>();
 
     for (String studentId : studentMapCopyIds) {
-      if (studentMapCopy.containsKey(studentId)) {
-        List<Student> group =
-            (List<Student>) getTopKRecommendations((T) studentMapCopy.get(studentId), teamSize);
-        optimalGroups.add(group);
+      if (studentMapCopyIds.length > teamSize) {
+        if (studentMapCopy.containsKey(studentId)) {
+          List<Student> group =
+              (List<Student>) getTopKRecommendations((T) studentMapCopy.get(studentId), teamSize);
+          optimalGroups.add(group);
 
-        for (Student s : group) {
-          studentMapCopy.remove(s.getId());
-        }
-
-        ArrayList<KVPair<String, double[]>> collection = new ArrayList();
-
-        for (Map.Entry<String, Student> studentEntry : studentMapCopy.entrySet()) {
-          Student student = studentEntry.getValue();
-
-          List<KVPair<String, Double>> skills = student.getSkills();
-          double[] collectionBuilder = new double[skills.size()];
-          for (int i = 0; i < skills.size(); i++) {
-            collectionBuilder[i] = skills.get(i).getValue();
+          for (Student s : group) {
+            studentMapCopy.remove(s.getId());
           }
 
-          collection.add(new KVPair(studentEntry.getKey(), collectionBuilder));
+          ArrayList<KVPair<String, double[]>> collection = new ArrayList();
 
-          kdTree = new KDTree<>(collection);
+          for (Map.Entry<String, Student> studentEntry : studentMapCopy.entrySet()) {
+            Student student = studentEntry.getValue();
+
+            List<KVPair<String, Double>> skills = student.getSkills();
+            double[] collectionBuilder = new double[skills.size()];
+            for (int i = 0; i < skills.size(); i++) {
+              collectionBuilder[i] = skills.get(i).getValue();
+            }
+
+            collection.add(new KVPair(studentEntry.getKey(), collectionBuilder));
+
+            kdTree = new KDTree<>(collection);
+          }
         }
+      } else {
+        // threw them all together
+        List<Student> group = new ArrayList<>();
+
+        for (String id : studentMapCopyIds) {
+          group.add(studentMapCopy.get(id));
+          studentMapCopy.remove(id);
+        }
+        optimalGroups.add(group);
       }
     }
     return optimalGroups;
