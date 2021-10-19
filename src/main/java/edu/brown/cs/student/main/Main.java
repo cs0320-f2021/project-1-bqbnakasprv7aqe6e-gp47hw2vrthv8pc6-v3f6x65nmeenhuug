@@ -97,7 +97,7 @@ public final class Main {
       CommandHandler commandHandler = new CommandHandler();
       MathBot mathbot = new MathBot();
 
-      ApiAggregator apiAggregator = new ApiAggregator();
+//      ApiAggregator apiAggregator = new ApiAggregator();
       GroupRecommender recommender = new GroupRecommender();
 
       // Add commands to CommandHandler

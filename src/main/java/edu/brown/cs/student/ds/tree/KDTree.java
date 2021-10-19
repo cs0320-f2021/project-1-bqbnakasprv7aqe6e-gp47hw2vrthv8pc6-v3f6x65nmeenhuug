@@ -88,8 +88,8 @@ public class KDTree<K> {
 
       return (int) Math.signum(dist1 - dist2);
     });
-    System.out.println("neighbors size: ");
-    System.out.println(neighbors.size());
+//    System.out.println("neighbors size: ");
+//    System.out.println(neighbors.size());
     return neighbors;
   }
 

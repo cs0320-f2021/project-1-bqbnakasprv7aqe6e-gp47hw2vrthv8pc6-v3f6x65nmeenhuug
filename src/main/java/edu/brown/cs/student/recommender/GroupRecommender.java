@@ -13,11 +13,15 @@ import java.util.*;
 /**
  * Class for GroupRecommender.
  */
-public class GroupRecommender implements Recommender<Student> {
+public class GroupRecommender<T extends Item> implements Recommender<T> {
   private Database database = new Database(); 
   private HashMap<String, Student> studentMap = new HashMap<String, Student>();
   private HashMap<String, List<KVPair<String, double[]>>> recommendationMap =
       new HashMap<String, List<KVPair<String, double[]>>>();
+  private HashMap<String, HashMap<String, Integer>> bloomFilterCompatibilityMap =
+      new HashMap<String, HashMap<String, Integer>>();
+  private HashMap<String, HashMap<String, Integer>> kdCompatibilityMap =
+      new HashMap<String, HashMap<String, Integer>>();
 
   /**
    * Default constructor
@@ -30,16 +34,34 @@ public class GroupRecommender implements Recommender<Student> {
     return studentMap.get(id);
   }
 
+  @Override
+  public List<T> getTopKRecommendations(T item, int k) {
+//    // TODO
+//    // get recommendations from kd tree and bloom filter recommenders
+//    Double falsePositivityRate = 0.0;
+//    BloomFilterRecommender<Student> bloomFilterRecommender = new BloomFilterRecommender<Student>(studentMap, falsePositivityRate);
+//    List<Student> bloomFilterRecommendations = bloomFilterRecommender.getTopKRecommendations((Student) item, k);
+//    // bloomFilterRecommender.getTopKRecommendations(item, k);
+//
+//    String id = item.getId();
+//
+//    for (int i = 0; i < bloomFilterRecommendations.size(); i++) {
+//      bloomFilterCompatibilityMap.get(id).put(bloomFilterRecommendations.get(i).getId(), i);
+//    }
+//
+//    List<KVPair<String, double[]>> kdRecommendations = recommendationMap.get(item);
+//
+//    // combine
+//
+//    List<T> recommendations = new ArrayList<>();
+//
+//    for (int i = 0; i < 5; i++) {
+//      Student bloomMatch = bloomFilterRecommendations.get(i);
+//      String matchId = bloomMatch.getId();
+//
+//      kdCompatibilityMap.get(id).get(matchId);
+//    }
 
-  public List<Student> getTopKRecommendations(Student item, int k) {
-    // TODO 
-    Double falsePositivityRate = 0.0;
-    BloomFilterRecommender<Student> bloomFilterRecommender = new BloomFilterRecommender<Student>(studentMap, falsePositivityRate);
-    List<Student> bloomFilterRecommendations =  bloomFilterRecommender.getTopKRecommendations(item, k);
-    // bloomFilterRecommender.getTopKRecommendations(item, k);
-    // TODO
-    // get recommendations from kd tree and bloom filter recommenders
-    // combine
     return null;
   }
 
@@ -134,7 +156,21 @@ public class GroupRecommender implements Recommender<Student> {
 //      System.out.println("cb l:");
 //      System.out.println(collectionBuilder[skills.size() - 1]);
       collection.add(new KVPair(studentEntry.getKey(), collectionBuilder));
-      }
+    }
+
+//    int p = 0;
+//    for (KVPair<String, double[]> kvPair : collection) {
+//      System.out.println(p);
+//      System.out.println("kvPair");
+//      System.out.println(kvPair.getKey());
+//      System.out.println(kvPair.getValue()[0]);
+//      System.out.println(kvPair.getValue()[1]);
+//      System.out.println(kvPair.getValue()[2]);
+//      System.out.println(kvPair.getValue()[3]);
+//      System.out.println(kvPair.getValue()[4]);
+//      System.out.println(kvPair.getValue()[5]);
+//      p++;
+//    }
 
 //    System.out.println("c0:");
 //    System.out.println(collection.get(0).getKey());
@@ -149,6 +185,7 @@ public class GroupRecommender implements Recommender<Student> {
       System.out.println("count:");
       System.out.println(c);
       Student student = studentEntry.getValue();
+      String id = student.getId();
 //      System.out.println("student id:");
 //      System.out.println(student.getId());
       List<KVPair<String, Double>> skills = student.getSkills();
@@ -164,11 +201,30 @@ public class GroupRecommender implements Recommender<Student> {
       int recs = 10;
       System.out.println("segk:");
       System.out.println(studentEntry.getKey());
-      recommendationMap.put(studentEntry.getKey(), tree.kNearestNeighbors(invertedSkill, recs));
+//      System.out.println(student.getId());
+      System.out.println("rmgs 1:");
+      System.out.println(recommendationMap.get(studentEntry.getKey()));
+      System.out.println(recommendationMap.get(id));
+      List<KVPair<String, double[]>> recommendations = tree.kNearestNeighbors(invertedSkill, recs);
+      System.out.println("recommendations:");
+      System.out.println(recommendations);
+
+      for (int i = 0; i < recommendations.size(); i++) {
+        kdCompatibilityMap.get(id).put(recommendations.get(i).getKey(), i);
+      }
+
+//      recommendationMap.put(studentEntry.getKey(), tree.kNearestNeighbors(invertedSkill, recs));
+//      recommendationMap.put(student.getId(), recommendations);
+      recommendationMap.put(id, recommendations);
       System.out.println("tknn:");
       System.out.println(tree.kNearestNeighbors(invertedSkill, recs));
+      System.out.println("rmgs 2:");
+      System.out.println(recommendationMap.get(studentEntry.getKey()));
+
       c++;
     }
+
+
 
     for (StudentTraits studentTraits : traits) {
       Student student = studentMap.get(String.valueOf(studentTraits.getId()));
@@ -225,8 +281,8 @@ public class GroupRecommender implements Recommender<Student> {
     }
 //    System.out.println(recommendationMap.size());
 //    System.out.println(recommendationMap.keySet());
-    System.out.println(recommendationMap.get("41"));
-    System.out.println(recommendationMap.get("41").size());
+    System.out.println(recommendationMap.get("42"));
+    System.out.println(recommendationMap.get("42").size());
 //    System.out.println(recommendationMap.values());
   }
 }
