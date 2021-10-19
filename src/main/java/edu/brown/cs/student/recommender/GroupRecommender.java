@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Class for GroupRecommender.
  */
-public class GroupRecommender<T extends Item> implements Recommender<T> {
+public class GroupRecommender implements Recommender<Student> {
   private Database database = new Database(); 
   private HashMap<String, Student> studentMap;
 
@@ -35,10 +35,11 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
   }
 
 
-  public List<T> getTopKRecommendations(T item, int k) {
+  public List<Student> getTopKRecommendations(Student item, int k) {
     // TODO 
     Double falsePositivityRate = 0.0;
-    BloomFilterRecommender bloomFilterRecommender = new BloomFilterRecommender<Student>(studentMap, falsePositivityRate);
+    BloomFilterRecommender<Student> bloomFilterRecommender = new BloomFilterRecommender<Student>(studentMap, falsePositivityRate);
+    List<Student> bloomFilterRecommendations =  bloomFilterRecommender.getTopKRecommendations(item, k);
     // bloomFilterRecommender.getTopKRecommendations(item, k);
     // TODO
     // get recommendations from kd tree and bloom filter recommenders
@@ -51,7 +52,7 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
 //    this.bloomFilterRecommender = bloomFilterRecommender;
 //  }
 
-  public List<Collection<T>> getOptimalGroups(int teamSize) {
+  public List<Collection<Student>> getOptimalGroups(int teamSize) {
     // TODO
     // generate groups
     return null;
@@ -73,8 +74,8 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
 
   public void loadData() throws Exception {
     List<StudentTraits> traits = database.rawQuery(
-        "SELECT i.id AS id, i.interest AS interest, p.trait AS positiveTrait, n.trait AS negativeTrait"
-      + "FROM interests AS i JOIN negative AS n ON i.id = n.id JOIN positive AS p ON i.id = p.id",
+        "SELECT interests.id AS id, interests.interest AS interest, positive.trait AS positiveTrait, negative.trait AS negativeTrait"
+      + "FROM interests JOIN negative ON negative.id = interests.id JOIN positive ON interests.id = positive.id",
       StudentTraits.class);
 
 //    System.out.println(database.getRelations());

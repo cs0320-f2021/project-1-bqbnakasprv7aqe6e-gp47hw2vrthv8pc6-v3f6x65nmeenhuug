@@ -103,6 +103,7 @@ public final class Main {
       // Add commands to CommandHandler
       commandHandler.addCommand("database", (args) -> {
         try {
+          database.clear(); 
           recommender.connect(args[0]);
           System.out.println("Loaded database from " + args[0]);
         } catch (ClassNotFoundException e) {
