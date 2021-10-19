@@ -133,7 +133,15 @@ public final class Main {
           Student student = recommender.getStudent(args[1]);
 
           // get student matches in preference order
-          System.out.println(recommender.getTopKRecommendations(student, numRecs));
+          List<Student> studentList = recommender.getTopKRecommendations(student, numRecs);
+
+          System.out.println("The top " + numRecs + " recommendations for student "
+              + student.getId() + " are:");
+
+          for (Student match : studentList) {
+            System.out.println(match.getId());
+          }
+
         } else { // Should do actual error instead?
           System.out.println("ERROR: recsys_rec requires the desired number of " +
               "recommendations and the student id provided as arguments in the form: " +
@@ -146,7 +154,17 @@ public final class Main {
           int teamSize = Integer.parseInt(args[0]);
 
           // get optimal groups
-          System.out.println(recommender.getOptimalGroups(teamSize));
+          List<List<Student>> groupsList = recommender.getOptimalGroups(teamSize);
+
+          System.out.println("The optimal groups of size " + teamSize + " for the given class are:");
+
+          for (List<Student> group : groupsList) {
+            List<String> memberList = new ArrayList<>();
+            for (Student member : group) {
+              memberList.add(member.getId());
+            }
+            System.out.println(memberList);
+          }
         } else { // Should do actual error instead?
           System.out.println("ERROR: recsys_gen_groups requires the desired team size to be provided " +
               "as an argument as follows: recsys_gen_groups <team_size>");

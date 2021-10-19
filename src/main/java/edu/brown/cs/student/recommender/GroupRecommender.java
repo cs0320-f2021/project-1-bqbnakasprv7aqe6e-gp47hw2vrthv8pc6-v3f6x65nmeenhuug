@@ -174,7 +174,7 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
 //    database.addRelation(positiveClass.class);
 //    database.addRelation(skillsClass.class);
 
-    System.out.println(database.getRelations());
+//    System.out.println(database.getRelations());
 
 //    List<StudentTraits> traits = database.rawQuery(
 //        "SELECT i.id AS id, i.interest AS interest, p.trait AS positiveTrait, n.trait AS negativeTrait"
