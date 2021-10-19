@@ -22,6 +22,9 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
       new HashMap<String, HashMap<String, Integer>>();
   private HashMap<String, HashMap<String, Integer>> kdCompatibilityMap =
       new HashMap<String, HashMap<String, Integer>>();
+  KDTree<String> kdTree;
+  BloomFilterRecommender<Student> bloomFilterRecommender;
+
 
   /**
    * Default constructor
@@ -30,12 +33,13 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
 
   // unsure if this should be handled another way -- must be able to access Student from Main
   // to call getTopKRecommendations
-  public Student getStudent(int id) {
+  public Student getStudent(String id) {
     return studentMap.get(id);
   }
 
   @Override
   public List<T> getTopKRecommendations(T item, int k) {
+
 //    // TODO
 //    // get recommendations from kd tree and bloom filter recommenders
 //    Double falsePositivityRate = 0.0;
@@ -62,7 +66,29 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
 //      kdCompatibilityMap.get(id).get(matchId);
 //    }
 
-    return null;
+      String id = item.getId();
+      Student student = studentMap.get(id);
+//      System.out.println("student id:");
+//      System.out.println(student.getId());
+      List<KVPair<String, Double>> skills = student.getSkills();
+      double[] invertedSkill = new double[skills.size()];
+      for (int i = 0; i < skills.size(); i++) {
+//        System.out.println("skills " + i);
+//        System.out.println(skills.get(i).getValue());
+        double inverted = Math.abs(skills.get(i).getValue() - 10.0);
+        invertedSkill[i] = inverted;
+      }
+
+      List<T> studentRecommendations = new ArrayList<>();
+
+    List<KVPair<String, double[]>> kdRecommendations = kdTree.kNearestNeighbors(invertedSkill, k);
+      for (KVPair<String, double[]> rec : kdRecommendations) {
+        // not great
+        studentRecommendations.add((T) studentMap.get(rec.getKey()));
+      }
+
+      // TODO convert to string
+    return studentRecommendations;
   }
 
 
@@ -177,52 +203,55 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
 //    System.out.println(collection.get(0).getValue());
 //    System.out.println(collection.get(0).getValue()[0]);
 //    System.out.println(collection.get(0).getValue()[5]);
-    KDTree<String> tree = new KDTree(collection);
+    kdTree = new KDTree(collection);
 
-    int c = 0;
+//    Double falsePositivityRate = 0.0;
+//    bloomFilterRecommender = new BloomFilterRecommender<Student>(studentMap, falsePositivityRate);
 
-    for (Map.Entry<String, Student> studentEntry : studentMap.entrySet()) {
-      System.out.println("count:");
-      System.out.println(c);
-      Student student = studentEntry.getValue();
-      String id = student.getId();
-//      System.out.println("student id:");
-//      System.out.println(student.getId());
-      List<KVPair<String, Double>> skills = student.getSkills();
-      double[] invertedSkill = new double[skills.size()];
-      for (int i = 0; i < skills.size(); i++) {
-//        System.out.println("skills " + i);
-//        System.out.println(skills.get(i).getValue());
-        double inverted = Math.abs(skills.get(i).getValue() - 10.0);
-        invertedSkill[i] = inverted;
-      }
-//      System.out.println(invertedSkill[0]);
-      // Change number of recommendations to get from KDTree here
-      int recs = 10;
-      System.out.println("segk:");
-      System.out.println(studentEntry.getKey());
-//      System.out.println(student.getId());
-      System.out.println("rmgs 1:");
-      System.out.println(recommendationMap.get(studentEntry.getKey()));
-      System.out.println(recommendationMap.get(id));
-      List<KVPair<String, double[]>> recommendations = tree.kNearestNeighbors(invertedSkill, recs);
-      System.out.println("recommendations:");
-      System.out.println(recommendations);
-
-      for (int i = 0; i < recommendations.size(); i++) {
-        kdCompatibilityMap.get(id).put(recommendations.get(i).getKey(), i);
-      }
-
-//      recommendationMap.put(studentEntry.getKey(), tree.kNearestNeighbors(invertedSkill, recs));
-//      recommendationMap.put(student.getId(), recommendations);
-      recommendationMap.put(id, recommendations);
-      System.out.println("tknn:");
-      System.out.println(tree.kNearestNeighbors(invertedSkill, recs));
-      System.out.println("rmgs 2:");
-      System.out.println(recommendationMap.get(studentEntry.getKey()));
-
-      c++;
-    }
+//    int c = 0;
+//
+//    for (Map.Entry<String, Student> studentEntry : studentMap.entrySet()) {
+//      System.out.println("count:");
+//      System.out.println(c);
+//      Student student = studentEntry.getValue();
+//      String id = student.getId();
+////      System.out.println("student id:");
+////      System.out.println(student.getId());
+//      List<KVPair<String, Double>> skills = student.getSkills();
+//      double[] invertedSkill = new double[skills.size()];
+//      for (int i = 0; i < skills.size(); i++) {
+////        System.out.println("skills " + i);
+////        System.out.println(skills.get(i).getValue());
+//        double inverted = Math.abs(skills.get(i).getValue() - 10.0);
+//        invertedSkill[i] = inverted;
+//      }
+////      System.out.println(invertedSkill[0]);
+//      // Change number of recommendations to get from KDTree here
+//      int recs = 10;
+//      System.out.println("segk:");
+//      System.out.println(studentEntry.getKey());
+////      System.out.println(student.getId());
+//      System.out.println("rmgs 1:");
+//      System.out.println(recommendationMap.get(studentEntry.getKey()));
+//      System.out.println(recommendationMap.get(id));
+//      List<KVPair<String, double[]>> recommendations = tree.kNearestNeighbors(invertedSkill, recs);
+//      System.out.println("recommendations:");
+//      System.out.println(recommendations);
+//
+//      for (int i = 0; i < recommendations.size(); i++) {
+//        kdCompatibilityMap.get(id).put(recommendations.get(i).getKey(), i);
+//      }
+//
+////      recommendationMap.put(studentEntry.getKey(), tree.kNearestNeighbors(invertedSkill, recs));
+////      recommendationMap.put(student.getId(), recommendations);
+//      recommendationMap.put(id, recommendations);
+//      System.out.println("tknn:");
+//      System.out.println(tree.kNearestNeighbors(invertedSkill, recs));
+//      System.out.println("rmgs 2:");
+//      System.out.println(recommendationMap.get(studentEntry.getKey()));
+//
+//      c++;
+//    }
 
 
 
@@ -281,8 +310,9 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
     }
 //    System.out.println(recommendationMap.size());
 //    System.out.println(recommendationMap.keySet());
-    System.out.println(recommendationMap.get("42"));
-    System.out.println(recommendationMap.get("42").size());
+//    System.out.println(recommendationMap.get("42"));
+//    System.out.println(recommendationMap.get("42").size());
 //    System.out.println(recommendationMap.values());
+    System.out.println("Loaded Recommender with " + studentMap.size() + " students.");
   }
 }

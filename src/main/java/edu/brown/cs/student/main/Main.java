@@ -129,11 +129,11 @@ public final class Main {
       commandHandler.addCommand("recsys_rec", (args) -> {
         if (args.length == 2) {
           int numRecs = Integer.parseInt(args[0]);
-          int id = Integer.parseInt(args[1]);
-          Student student = recommender.getStudent(id);
+//          int id = Integer.parseInt(args[1]);
+          Student student = recommender.getStudent(args[1]);
 
           // get student matches in preference order
-          recommender.getTopKRecommendations(student, numRecs);
+          System.out.println(recommender.getTopKRecommendations(student, numRecs));
         } else { // Should do actual error instead?
           System.out.println("ERROR: recsys_rec requires the desired number of " +
               "recommendations and the student id provided as arguments in the form: " +
