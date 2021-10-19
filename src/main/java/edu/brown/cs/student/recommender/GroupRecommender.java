@@ -37,10 +37,6 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
   }
 
 
-  public void setBloomFilterRecommender(BloomFilterRecommender<T> bloomFilterRecommender) {
-    this.bloomFilterRecommender = bloomFilterRecommender;
-  }
-
 
   /**
    * Connect the instance's database object to the given database. 
