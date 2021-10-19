@@ -39,6 +39,7 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
     // TODO 
     Double falsePositivityRate = 0.0;
     BloomFilterRecommender bloomFilterRecommender = new BloomFilterRecommender<Student>(studentMap, falsePositivityRate);
+    // bloomFilterRecommender.getTopKRecommendations(item, k);
     // TODO
     // get recommendations from kd tree and bloom filter recommenders
     // combine
