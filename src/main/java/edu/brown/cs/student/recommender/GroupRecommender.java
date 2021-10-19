@@ -96,10 +96,44 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
 //    this.bloomFilterRecommender = bloomFilterRecommender;
 //  }
 
-  public List<Collection<Student>> getOptimalGroups(int teamSize) {
+  public List<List<Student>> getOptimalGroups(int teamSize) {
     // TODO
     // generate groups
-    return null;
+
+    HashMap<String, Student> studentMapCopy = (HashMap<String, Student>) studentMap.clone();
+
+    String[] studentMapCopyIds = (String[]) studentMapCopy.keySet().toArray();
+
+    List<List<Student>> optimalGroups = new ArrayList<>();
+
+    for (String studentId : studentMapCopyIds) {
+      if (studentMapCopy.containsKey(studentId)) {
+        List<Student> group =
+            (List<Student>) getTopKRecommendations((T) studentMapCopy.get(studentId), teamSize);
+        optimalGroups.add(group);
+
+        for (Student s : group) {
+          studentMapCopy.remove(s.getId());
+        }
+
+        ArrayList<KVPair<String, double[]>> collection = new ArrayList();
+
+        for (Map.Entry<String, Student> studentEntry : studentMapCopy.entrySet()) {
+          Student student = studentEntry.getValue();
+
+          List<KVPair<String, Double>> skills = student.getSkills();
+          double[] collectionBuilder = new double[skills.size()];
+          for (int i = 0; i < skills.size(); i++) {
+            collectionBuilder[i] = skills.get(i).getValue();
+          }
+
+          collection.add(new KVPair(studentEntry.getKey(), collectionBuilder));
+
+          kdTree = new KDTree<>(collection);
+        }
+      }
+    }
+    return optimalGroups;
   }
 
   /**
