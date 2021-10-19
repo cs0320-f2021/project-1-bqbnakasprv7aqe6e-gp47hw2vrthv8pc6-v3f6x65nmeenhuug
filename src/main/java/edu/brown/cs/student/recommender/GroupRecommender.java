@@ -70,10 +70,10 @@ public class GroupRecommender implements Recommender<Student> {
   }
 
   public void loadData() throws Exception {
-    List<StudentTraits> traits = database.rawQuery(
-        "SELECT interests.id AS id, interests.interest AS interest, positive.trait AS positiveTrait, negative.trait AS negativeTrait"
-      + "FROM interests JOIN negative ON negative.id = interests.id JOIN positive ON interests.id = positive.id",
-      StudentTraits.class);
+//    List<StudentTraits> traits = database.rawQuery(
+//        "SELECT interests.id AS id, interests.interest AS interest, positive.trait AS positiveTrait, negative.trait AS negativeTrait"
+//      + "FROM interests JOIN negative ON negative.id = interests.id JOIN positive ON interests.id = positive.id",
+//      StudentTraits.class);
 
 //    database.addRelation(interestsClass.class);
 //    database.addRelation(negativeClass.class);
@@ -116,9 +116,16 @@ public class GroupRecommender implements Recommender<Student> {
     }
 
     ArrayList<KVPair<String, double[]>> collection = new ArrayList(studentMap.size());
+    System.out.print("collection size:");
+    System.out.print(collection.size());
 
+//    for (String id : studentMap.keySet()) {
+//      Student student = id.
+//    }
     for (Map.Entry<String, Student> student : studentMap.entrySet()) {
       Student value = student.getValue();
+      System.out.println("student: ");
+      System.out.println(value);
       List<KVPair<String, Double>> skills = value.getSkills();
       double[] collectionBuilder = new double[skills.size()];
       for (int i = 0; i < skills.size(); i++) {
@@ -135,7 +142,6 @@ public class GroupRecommender implements Recommender<Student> {
       for (int i = 0; i < skills.size(); i++) {
         double inverted = Math.abs(skills.get(i).getValue() - 10.0);
         invertedSkill[i] = inverted;
-        System.out.println(inverted);
       }
       System.out.println(invertedSkill[0]);
       // Change number of recommendations to get from KDTree here
