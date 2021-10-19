@@ -56,23 +56,37 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
    * Connect the instance's database object to the given database. 
    */
   public void connect(String path) throws SQLException, ClassNotFoundException {
+//    database = database.connect(path);
     database.connect(path);
-//    database.addRelation(interestsClass.class);
-//    database.addRelation(negativeClass.class);
-//    database.addRelation(positiveClass.class);
-//    database.addRelation(skillsClass.class);
+    database.addRelation(interestsClass.class);
+    database.addRelation(negativeClass.class);
+    database.addRelation(positiveClass.class);
+    database.addRelation(skillsClass.class);
 //    database.addRelation(StudentTraits.class);
 //    database.addRelation(StudentSkills.class);
 //    System.out.println(database.getRelations());
   }
 
   public void loadData() throws Exception {
-    List<StudentTraits> traits = database.rawQuery(
-        "SELECT i.id AS id, i.interest AS interest, p.trait AS positiveTrait, n.trait AS negativeTrait"
-      + "FROM interests AS i JOIN negative AS n ON i.id = n.id JOIN positive AS p ON i.id = p.id",
-      StudentTraits.class);
+    System.out.println(database.getRelations());
 
-//    System.out.println(database.getRelations());
+//    database.addRelation(interestsClass.class);
+//    database.addRelation(negativeClass.class);
+//    database.addRelation(positiveClass.class);
+//    database.addRelation(skillsClass.class);
+
+    System.out.println(database.getRelations());
+
+//    List<StudentTraits> traits = database.rawQuery(
+//        "SELECT i.id AS id, i.interest AS interest, p.trait AS positiveTrait, n.trait AS negativeTrait"
+//      + " FROM interests AS i JOIN negative AS n ON i.id = n.id JOIN positive AS p ON i.id = p.id",
+//      StudentTraits.class);
+
+    List<StudentTraits> traits = database.rawQuery(
+        "SELECT interests.id AS id, interests.interest AS interest, positive.trait AS positiveTrait, "
+            + "negative.trait AS negativeTrait FROM interests JOIN negative ON negative.id = interests.id "
+            + "JOIN positive ON interests.id = positive.id",
+        StudentTraits.class);
 
     List<StudentSkills> skillsQueryResult = database.rawQuery("SELECT * FROM skills", StudentSkills.class);
 //    List<skillsClass> skillsQueryResult = database.rawQuery("SELECT * FROM skills", skillsClass.class);
