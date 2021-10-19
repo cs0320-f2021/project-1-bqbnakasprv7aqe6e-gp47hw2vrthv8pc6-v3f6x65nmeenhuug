@@ -120,33 +120,6 @@ public final class Main {
           } catch (Exception e) {
             e.printStackTrace();
           }
-          // NOTE: Implemented student class for better integration with 
-          // bloom field recommender api, see GroupRecommender.getTopKRecommendations
-          // for the equivalent of the below calls.
-
-          // try {
-//          List<Object> apiData = apiAggregator.getData("APIClass");
-
-
-          //   // not sure about value type here
-          //   HashMap<Integer, Object> discreteTraitsMap = new HashMap();
-          //   List<Object> continuousTraitsList = new ArrayList();
-
-          //   List<User> userList = database.rawQuery("SELECT * FROM users", User.class);
-            
-          //   for (User user : userList) {
-          //     // populate map
-          //     // populate list
-          //   }
-
-          //   // NOTE: placeholder false positive rate -- FILL IN
-          //   BloomFilterRecommender bloomFilterRecommender = new BloomFilterRecommender(discreteTraitsMap, 0);
-
-          //   recommender.setBloomFilterRecommender(bloomFilterRecommender);
-          // } catch (Exception e) {
-          //   e.printStackTrace();
-          //   Error.badInputError();
-          // }
         } else {
           System.out.println("ERROR: No such recsys_load command: " + args[1]);
         }
