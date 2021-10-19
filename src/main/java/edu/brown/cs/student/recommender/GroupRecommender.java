@@ -115,7 +115,9 @@ public class GroupRecommender<T extends Item> implements Recommender<T> {
         double inverted = skills.get(i).getValue() - 10.0;
         invertedSkill[i] = inverted;
       }
-      recommendationMap.put(student.getKey(), tree.kNearestNeighbors(invertedSkill, 10));
+      // Change number of recommendations to get from KDTree here
+      int recs = 10;
+      recommendationMap.put(student.getKey(), tree.kNearestNeighbors(invertedSkill, recs));
     }
 
 
