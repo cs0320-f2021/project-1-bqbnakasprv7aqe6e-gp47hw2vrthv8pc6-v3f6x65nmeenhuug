@@ -65,13 +65,14 @@ public class Database {
    * @throws SQLException
    * @throws ClassNotFoundException
    */
-  public void connect(String filename) throws SQLException, ClassNotFoundException {
+  public Database connect(String filename) throws SQLException, ClassNotFoundException {
     this.clear();
     Class.forName("org.sqlite.JDBC");
     String urlToDB = "jdbc:sqlite:" + filename;
     conn = DriverManager.getConnection(urlToDB);
     Statement stat = conn.createStatement();
     stat.executeUpdate("PRAGMA foreign_keys=ON;");
+    return this;
   }
 
   /**

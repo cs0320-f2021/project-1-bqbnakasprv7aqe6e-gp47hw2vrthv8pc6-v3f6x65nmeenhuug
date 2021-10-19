@@ -91,14 +91,14 @@ public class StudentSkills extends DBRelation{
     }
 
     @RelationAttributeGetter(
-        name = "oop"
+        name = "OOP"
     )
     public int getOop() {
         return oop;
     }
 
     @RelationAttributeSetter(
-        name = "oop"
+        name = "OOP"
     )
     public void setOop(int oop) {
         this.oop = oop;

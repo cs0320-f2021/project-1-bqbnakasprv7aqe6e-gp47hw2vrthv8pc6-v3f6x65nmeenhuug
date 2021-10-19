@@ -1,0 +1,2 @@
+ SELECT interests.id AS id, interests.interest AS interest, positive.trait AS positiveTrait, negative.trait AS negativeTrait
+ FROM interests JOIN negative ON negative.id = interests.id JOIN positive ON interests.id = positive.id

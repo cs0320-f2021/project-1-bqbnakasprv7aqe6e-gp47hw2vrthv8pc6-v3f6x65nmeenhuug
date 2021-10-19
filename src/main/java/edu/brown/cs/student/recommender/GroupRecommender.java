@@ -1,27 +1,23 @@
 package edu.brown.cs.student.recommender;
 
-import com.google.gson.Gson;
 import edu.brown.cs.student.bloomfilter.BloomFilterRecommender;
 import edu.brown.cs.student.database.Database;
-import edu.brown.cs.student.database.exceptions.BadRelationException;
 import edu.brown.cs.student.database.relations.*;
 import edu.brown.cs.student.ds.KVPair;
+import edu.brown.cs.student.ds.tree.KDTree;
 import edu.brown.cs.student.main.ApiAggregator;
 
-import java.lang.reflect.Type;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class for GroupRecommender.
  */
 public class GroupRecommender implements Recommender<Student> {
   private Database database = new Database(); 
-  private HashMap<String, Student> studentMap;
+  private HashMap<String, Student> studentMap = new HashMap<String, Student>();
+  private HashMap<String, List<KVPair<String, double[]>>> recommendationMap =
+      new HashMap<String, List<KVPair<String, double[]>>>();
 
   /**
    * Default constructor
@@ -62,11 +58,12 @@ public class GroupRecommender implements Recommender<Student> {
    * Connect the instance's database object to the given database. 
    */
   public void connect(String path) throws SQLException, ClassNotFoundException {
+//    database = database.connect(path);
     database.connect(path);
-//    database.addRelation(interestsClass.class);
-//    database.addRelation(negativeClass.class);
-//    database.addRelation(positiveClass.class);
-//    database.addRelation(skillsClass.class);
+    database.addRelation(interestsClass.class);
+    database.addRelation(negativeClass.class);
+    database.addRelation(positiveClass.class);
+    database.addRelation(skillsClass.class);
 //    database.addRelation(StudentTraits.class);
 //    database.addRelation(StudentSkills.class);
 //    System.out.println(database.getRelations());
@@ -78,7 +75,23 @@ public class GroupRecommender implements Recommender<Student> {
       + "FROM interests JOIN negative ON negative.id = interests.id JOIN positive ON interests.id = positive.id",
       StudentTraits.class);
 
-//    System.out.println(database.getRelations());
+//    database.addRelation(interestsClass.class);
+//    database.addRelation(negativeClass.class);
+//    database.addRelation(positiveClass.class);
+//    database.addRelation(skillsClass.class);
+
+    System.out.println(database.getRelations());
+
+//    List<StudentTraits> traits = database.rawQuery(
+//        "SELECT i.id AS id, i.interest AS interest, p.trait AS positiveTrait, n.trait AS negativeTrait"
+//      + " FROM interests AS i JOIN negative AS n ON i.id = n.id JOIN positive AS p ON i.id = p.id",
+//      StudentTraits.class);
+
+    List<StudentTraits> traits = database.rawQuery(
+        "SELECT interests.id AS id, interests.interest AS interest, positive.trait AS positiveTrait, "
+            + "negative.trait AS negativeTrait FROM interests JOIN negative ON negative.id = interests.id "
+            + "JOIN positive ON interests.id = positive.id",
+        StudentTraits.class);
 
     List<StudentSkills> skillsQueryResult = database.rawQuery("SELECT * FROM skills", StudentSkills.class);
 //    List<skillsClass> skillsQueryResult = database.rawQuery("SELECT * FROM skills", skillsClass.class);
@@ -96,9 +109,40 @@ public class GroupRecommender implements Recommender<Student> {
       skills.add(new KVPair<String, Double>("frontend", (double) studentSkills.getFrontend()));
 
       Student student = new Student(String.valueOf(studentSkills.getId()));
+      System.out.println(student);
+      System.out.println(student.getId());
       student.setSkills(skills);
       studentMap.put(student.getId(), student);
     }
+
+    ArrayList<KVPair<String, double[]>> collection = new ArrayList(studentMap.size());
+
+    for (Map.Entry<String, Student> student : studentMap.entrySet()) {
+      Student value = student.getValue();
+      List<KVPair<String, Double>> skills = value.getSkills();
+      double[] collectionBuilder = new double[skills.size()];
+      for (int i = 0; i < skills.size(); i++) {
+        collectionBuilder[i] = skills.get(i).getValue();
+      }
+      collection.add(new KVPair(student.getKey(), collectionBuilder));
+      }
+
+    KDTree<String> tree = new KDTree(collection);
+    for (Map.Entry<String, Student> student : studentMap.entrySet()) {
+      Student value = student.getValue();
+      List<KVPair<String, Double>> skills = value.getSkills();
+      double[] invertedSkill = new double[skills.size()];
+      for (int i = 0; i < skills.size(); i++) {
+        double inverted = Math.abs(skills.get(i).getValue() - 10.0);
+        invertedSkill[i] = inverted;
+        System.out.println(inverted);
+      }
+      System.out.println(invertedSkill[0]);
+      // Change number of recommendations to get from KDTree here
+      int recs = 10;
+      recommendationMap.put(student.getKey(), tree.kNearestNeighbors(invertedSkill, recs));
+    }
+
 
     for (StudentTraits studentTraits : traits) {
       Student student = studentMap.get(String.valueOf(studentTraits.getId()));
@@ -135,7 +179,11 @@ public class GroupRecommender implements Recommender<Student> {
       // Is it okay to cast here?
       APIClass datum = (APIClass) apiDatum;
       int id = datum.getId();
-      Student student = studentMap.get(id);
+      Student student = studentMap.get(String.valueOf(id));
+
+      System.out.println(datum);
+      System.out.println(id);
+      System.out.println(student);
 
       student.addTrait(datum.getMeeting());
       student.addTrait(datum.getGrade());
@@ -148,6 +196,9 @@ public class GroupRecommender implements Recommender<Student> {
         student.addSkill(new KVPair<String, Double>("grade_level", datum.getCastedGrade()));
       }
     }
+    System.out.println(recommendationMap.size());
+//    System.out.println(recommendationMap.keySet());
+    System.out.println(recommendationMap.get("1").size());
+//    System.out.println(recommendationMap.values());
   }
-   
 }

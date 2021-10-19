@@ -61,7 +61,7 @@ public class KDTree<K> {
     }
     int sortIndex = depth % dimension;
     Collections.sort(itemsList, (e1, e2) -> {
-      return Math.signum(e1.getValue()[sortIndex] - e2.getValue()[sortIndex]);
+      return (int) Math.signum(e1.getValue()[sortIndex] - e2.getValue()[sortIndex]);
     });
 
     int medianIndex = (itemsList.size() / 2);
