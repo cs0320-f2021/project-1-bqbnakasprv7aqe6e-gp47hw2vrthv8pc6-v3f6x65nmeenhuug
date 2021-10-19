@@ -17,8 +17,9 @@ import edu.brown.cs.student.bloomfilter.BloomFilterRecommender;
 import edu.brown.cs.student.database.relations.*;
 
 import edu.brown.cs.student.recommender.GroupRecommender;
+import edu.brown.cs.student.recommender.Student;
 import freemarker.template.Configuration;
-import jdk.internal.module.SystemModuleFinders;
+//import jdk.internal.module.SystemModuleFinders;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import spark.ExceptionHandler;
@@ -91,7 +92,7 @@ public final class Main {
       List<String[]> starData = new ArrayList<String[]>();
       List<KVPair<User, double[]>> userData = new ArrayList<KVPair<User, double[]>>();
       CSVParser csvparser = new CSVParser();
-      // Database database = new Database(); 
+      Database database = new Database();
       
       CommandHandler commandHandler = new CommandHandler();
       MathBot mathbot = new MathBot();
@@ -103,6 +104,7 @@ public final class Main {
       commandHandler.addCommand("database", (args) -> {
         try {
           recommender.connect(args[0]);
+          System.out.println("Loaded database from " + args[0]);
         } catch (ClassNotFoundException e) {
           System.out.println("An unexpected error has occurred: could not find org.sqlite.JDBC");
         } catch (SQLException e) {
@@ -112,7 +114,7 @@ public final class Main {
 
       commandHandler.addCommand("recsys_load", (args) -> {
         if (args[0].equals("responses")) {
-          try {
+        try {
             // More efficient to join these traits on query 
             recommender.loadData();
           } catch (Exception e) {
@@ -123,8 +125,7 @@ public final class Main {
           // for the equivalent of the below calls.
 
           // try {
-          //   List<Object> apiData = apiAggregator.getData("APIClass");
-          //   System.out.println(apiData);
+//          List<Object> apiData = apiAggregator.getData("APIClass");
 
 
           //   // not sure about value type here
@@ -148,6 +149,33 @@ public final class Main {
           // }
         } else {
           System.out.println("ERROR: No such recsys_load command: " + args[1]);
+        }
+      });
+
+      commandHandler.addCommand("recsys_rec", (args) -> {
+        if (args.length == 2) {
+          int numRecs = Integer.parseInt(args[0]);
+          int id = Integer.parseInt(args[1]);
+          Student student = recommender.getStudent(id);
+
+          // get student matches in preference order
+          recommender.getTopKRecommendations(student, numRecs);
+        } else { // Should do actual error instead?
+          System.out.println("ERROR: recsys_rec requires the desired number of " +
+              "recommendations and the student id provided as arguments in the form: " +
+              "recsys_rec <num_recs> <student_id>");
+        }
+      });
+
+      commandHandler.addCommand("recsys_gen_groups", (args) -> {
+        if (args.length == 1) {
+          int teamSize = Integer.parseInt(args[0]);
+
+          // get optimal groups
+          recommender.getOptimalGroups(teamSize);
+        } else { // Should do actual error instead?
+          System.out.println("ERROR: recsys_gen_groups requires the desired team size to be provided " +
+              "as an argument as follows: recsys_gen_groups <team_size>");
         }
       });
 

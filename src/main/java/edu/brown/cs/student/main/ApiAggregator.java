@@ -23,7 +23,7 @@ public class ApiAggregator {
         Type type = setType(dataType);
         String filename = "https://runwayapi.herokuapp.com/" + dataType + "-";
         String response = client.makeRequest(ClientRequestGenerator.getSecuredPostRequest("yeet"));
-        return gson.fromJson(response,type);
+        return gson.fromJson(response, type);
     }
 
     /**
@@ -66,7 +66,7 @@ public class ApiAggregator {
 
          */
         // dummy return
-        if (dataType.equals("responses")) {
+        if (dataType.equals("APIClass")) {
             return new TypeToken<List<APIClass>>(){}.getType();
         }
         return new TypeToken<List<Object>>(){}.getType();
