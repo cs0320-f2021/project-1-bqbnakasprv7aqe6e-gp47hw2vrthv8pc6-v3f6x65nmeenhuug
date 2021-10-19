@@ -136,11 +136,18 @@ public class GroupRecommender implements Recommender<Student> {
       collection.add(new KVPair(studentEntry.getKey(), collectionBuilder));
       }
 
-    System.out.println("c0:");
-    System.out.println(collection.get(0).getKey());
+//    System.out.println("c0:");
+//    System.out.println(collection.get(0).getKey());
+//    System.out.println(collection.get(0).getValue());
+//    System.out.println(collection.get(0).getValue()[0]);
+//    System.out.println(collection.get(0).getValue()[5]);
     KDTree<String> tree = new KDTree(collection);
 
+    int c = 0;
+
     for (Map.Entry<String, Student> studentEntry : studentMap.entrySet()) {
+      System.out.println("count:");
+      System.out.println(c);
       Student student = studentEntry.getValue();
 //      System.out.println("student id:");
 //      System.out.println(student.getId());
@@ -155,7 +162,12 @@ public class GroupRecommender implements Recommender<Student> {
 //      System.out.println(invertedSkill[0]);
       // Change number of recommendations to get from KDTree here
       int recs = 10;
+      System.out.println("segk:");
+      System.out.println(studentEntry.getKey());
       recommendationMap.put(studentEntry.getKey(), tree.kNearestNeighbors(invertedSkill, recs));
+      System.out.println("tknn:");
+      System.out.println(tree.kNearestNeighbors(invertedSkill, recs));
+      c++;
     }
 
     for (StudentTraits studentTraits : traits) {
@@ -211,9 +223,10 @@ public class GroupRecommender implements Recommender<Student> {
         student.addSkill(new KVPair<String, Double>("grade_level", datum.getCastedGrade()));
       }
     }
-    System.out.println(recommendationMap.size());
+//    System.out.println(recommendationMap.size());
 //    System.out.println(recommendationMap.keySet());
-    System.out.println(recommendationMap.get("1").size());
+    System.out.println(recommendationMap.get("41"));
+    System.out.println(recommendationMap.get("41").size());
 //    System.out.println(recommendationMap.values());
   }
 }
